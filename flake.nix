@@ -1,10 +1,11 @@
 {
-  description = "MyNib - My Nix Library";
+  description = "NixTypes (nt)";
 
-  inputs.systems.url = "github:nix-systems/default";
+  inputs = {
+    systems.url = "github:nix-systems/default";
+    mix.url = "github:emilelcb/mix";
+  };
 
-  outputs = {self, ...} @ inputs: let
-    systems = import inputs.systems;
-  in
-    import ./nib {inherit systems;};
+  outputs = {...} @ inputs:
+    import ./nt inputs;
 }
