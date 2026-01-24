@@ -28,7 +28,7 @@ in rec {
   enfIsClassSig = msg: sig:
     isClassSig sig || throw "${msg}: given value \"${toString sig}\" of primitive nix type \"${typeOf sig}\" is not a valid Typeclass signature";
 
-  enfIsTypeSig = msg: sig:
+  enfTypeSig = msg: sig:
     isTypeSig sig || throw "${msg}: given value \"${toString sig}\" of primitive nix type \"${typeOf sig}\" is not a valid Type signature";
 
   enfIsNT = msg: T:
