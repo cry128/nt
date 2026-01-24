@@ -52,7 +52,7 @@ in rec {
   typeSig' = T: T.${ntTrapdoorKey}.sig;
 
   # NOTE: safe variant, use typeSig' if you can guarantee `isNT T` holds
-  typeSig = T: assert enfIsNT "nt.typeSig" T; typeSig' T;
+  typeSig = T: assert enfIsNT T "nt.typeSig"; typeSig' T;
 
   toTypeSig = x:
     if isString x

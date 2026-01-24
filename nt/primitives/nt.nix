@@ -38,7 +38,7 @@
     else builder;
 
   parseDecl = base: decl:
-    assert enfType "parseDecl" "set" decl;
+    assert enfType "set" decl "parseDecl";
     # ^^^^ "Type declaration must be provided as an attribute set, got "${typeOf decl}" instead!"
       decl |> projectOnto base;
 
@@ -69,7 +69,7 @@
   };
 
   mkClass = sig: decl:
-    assert enfIsClassSig "mkClass" sig; let
+    assert enfIsClassSig sig "mkClass"; let
       allDerivedClasses =
         decl.derive
         |> map (class: typeSig class ++ class.${ntTrapdoorKey}.derive);

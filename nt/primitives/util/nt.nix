@@ -48,12 +48,12 @@ in rec {
   impls' = type: T: elem (toTypeSig type) T.${ntTrapdoorKey}.derive;
 
   # NOTE safe variant, use impls' if you can guarantee `isNT T` holds
-  impls = type: T: assert enfIsNT "nt.impls" T; impls' type T;
+  impls = type: T: assert enfIsNT T "nt.impls"; impls' type T;
 
   # check if a type/class implements a signature
   # NOTE: unsafe variant, use `is` if you can't guarantee `isNT T` holds
   is' = type: T: T.${ntTrapdoorKey}.sig == toTypeSig type;
 
   # NOTE safe variant, use `is'` if you can guarantee `isNT T` holds
-  is = type: T: assert enfIsNT "nt.is" T; is' type T;
+  is = type: T: assert enfIsNT T "nt.is"; is' type T;
 }
