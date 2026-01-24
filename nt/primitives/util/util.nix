@@ -2,6 +2,7 @@
 {...}: let
   inherit
     (builtins)
+    attrNames
     elem
     elemAt
     filter
@@ -10,8 +11,10 @@
     genList
     length
     mapAttrs
+    match
     partition
     removeAttrs
+    replaceStrings
     stringLength
     substring
     tail
@@ -97,6 +100,14 @@ in rec {
   stringInit = x: x |> stringTake 1;
   stringLast = x: stringElem (stringLength x - 1);
 
+  stringToCharacters = s: genList (p: substring p 1 s) (stringLength s);
+
+  escape = list: replaceStrings list (map (c: "\\${c}") list);
+  escapeRegex = escape (stringToCharacters "\\[{()^$?*+|.");
+
+  hasInfix = infix: content:
+    match ".*${escapeRegex infix}.*" "${content}" != null;
+
   countEvensLeq = n: n / 2;
   countOddsLeq = n: (n + 1) / 2;
 
@@ -151,4 +162,11 @@ in rec {
         |> filter (x: head x == name)
         |> map tail
         |> removeAttrsRec);
+
+  filterAttrs = pred: xs:
+    attrNames xs
+    |> filter (name: ! pred name xs.${name})
+    |> removeAttrs xs;
+
+  nameValuePair = name: value: {inherit name value;};
 }
