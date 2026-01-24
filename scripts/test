@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+INPUT=\
+"let
+  nt = builtins.getFlake (builtins.toString ./.);
+  test = import examples/maybe.nix {inherit nt;};
+in
+  builtins.attrNames test.None"
+
+echo "$INPUT"
+
+set -x
+nix eval --show-trace --impure --expr "$INPUT"
