@@ -1,11 +1,9 @@
 {
   description = "NixTypes (nt)";
 
-  inputs = {
-    systems.url = "github:nix-systems/default";
-    mix.url = "github:emilelcb/mix";
-  };
-
-  outputs = {...} @ inputs:
-    import ./nt inputs;
+  outputs = _: let
+    # nt depends on the mix subsystem for bootstrapping
+    mix = import ./nt/primitives/mix;
+  in
+    import ./nt {inherit mix;};
 }
