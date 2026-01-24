@@ -4,6 +4,7 @@ mix.newMixture inputs (mixture: {
     ./enforce.nix
     ./nt.nix
     ./null.nix
+    ./maybe.nix
     ./parse.nix
     ./sig.nix
     ./trapdoor.nix

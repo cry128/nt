@@ -7,9 +7,11 @@
 
   inherit
     (this)
+    impls
     isClassSig
     isNT
     isTypeSig
+    toTypeSig
     ;
 in rec {
   enfIsType = type: value: msg: let
@@ -33,4 +35,9 @@ in rec {
 
   enfIsNT = T: msg:
     isNT T || throw "${msg}: expected nt compatible type but got \"${toString T}\" of primitive nix type \"${typeOf T}\"";
+
+  # assert enfImpls "nt::&Maybe" T "nt::&Maybe.unwrap";
+  #   impls = type: T: assert enfIsNT T "nt.impls"; impls' type T;
+  enfImpls = type: T: msg:
+    impls type T || throw "${msg}: given type \"${toTypeSig T}\" does not implement typeclass \"${toTypeSig type}\"";
 }
