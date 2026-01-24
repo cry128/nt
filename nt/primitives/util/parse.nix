@@ -42,7 +42,7 @@ in rec {
   in
     recmapFrom [];
 
-  projectOnto = f: dst: src:
+  projectOnto = dst: src:
     dst
     |> recmap
     (path: dstLeaf: let
