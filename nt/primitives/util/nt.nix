@@ -11,33 +11,33 @@
     (this)
     enfIsNT
     ntTrapdoorKey
-    openTrapdoorFn
+    openTrapdoor
     toTypeSig
     ;
 in rec {
   # check if a value is an nt type/class
   isNT = T: let
-    content = openTrapdoorFn ntTrapdoorKey T;
+    content = openTrapdoor ntTrapdoorKey T;
     names = attrNames content;
   in
     isAttrs content
     && all (name: elem name names) ["sig" "derive" "ops" "req"];
 
   isNixClass = T: let
-    content = openTrapdoorFn ntTrapdoorKey T;
+    content = openTrapdoor ntTrapdoorKey T;
   in
     isAttrs content
     && attrNames content == ["sig" "derive" "ops" "req"];
 
   isNixType = T: let
-    content = openTrapdoorFn ntTrapdoorKey T;
+    content = openTrapdoor ntTrapdoorKey T;
   in
     isAttrs content
     && attrNames content == ["instance" "sig" "derive" "ops" "req"]
     && content.instance == false;
 
   isNixTypeInstance = T: let
-    content = openTrapdoorFn ntTrapdoorKey T;
+    content = openTrapdoor ntTrapdoorKey T;
   in
     isAttrs content
     && attrNames content == ["instance" "sig" "derive" "ops" "req"]
