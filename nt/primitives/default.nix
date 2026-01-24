@@ -3,7 +3,7 @@ mix.newMixture inputs (mixture: {
   includes.public = [
     ./nt.nix
   ];
-  imports.public = [
+  submods.public = [
     # TODO: make ./util private
     ./util
   ];
