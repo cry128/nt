@@ -1,6 +1,6 @@
-{this, ...}: let
+{nt, ...}: let
   inherit
-    (this)
+    (nt.util)
     ntTrapdoorKey
     ntDynamicTrapdoorKey
     mkTrapdoorFn
