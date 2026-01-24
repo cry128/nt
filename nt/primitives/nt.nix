@@ -9,7 +9,7 @@
 
   inherit
     (this.util)
-    enfType
+    enfIsType
     enfIsClassSig
     flipCurry
     hasAttrAt
@@ -38,7 +38,7 @@
     else builder;
 
   parseDecl = base: decl:
-    assert enfType "set" decl "parseDecl";
+    assert enfIsType "set" decl "parseDecl";
     # ^^^^ "Type declaration must be provided as an attribute set, got "${typeOf decl}" instead!"
       decl |> projectOnto base;
 

@@ -8,7 +8,7 @@
 
   inherit
     (this)
-    enfType
+    enfIsType
     is
     Wrap
     ;
@@ -17,7 +17,7 @@ in rec {
   # given path as a list of strings, return that value of an
   # attribute set at that path
   getAttrAt = path: xs:
-    assert enfType "set" xs "getAttrAt";
+    assert enfIsType "set" xs "getAttrAt";
       foldl' (left: right:
         if left != null && isAttrs left.value && hasAttr right left.value
         then Wrap left.value.${right}
@@ -29,7 +29,7 @@ in rec {
   # given path as a list of strings, return that value of an
   # attribute set at that path
   hasAttrAt = path: xs:
-    assert enfType "set" xs "hasAttrAt";
+    assert enfIsType "set" xs "hasAttrAt";
       getAttrAt path xs != null; # NOTE: inefficient (im lazy)
 
   # Alternative to mapAttrsRecursiveCond

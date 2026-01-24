@@ -12,7 +12,7 @@
     isTypeSig
     ;
 in rec {
-  enfType = type: value: msg: let
+  enfIsType = type: value: msg: let
     got = typeOf value;
   in
     got == type || throw "${msg}: expected primitive nix type \"${type}\" but got \"${got}\"";
@@ -23,12 +23,12 @@ in rec {
 
   # NOTE: use enfHasAttr' if you can guarantee xs is type set
   enfHasAttr = name: xs: msg:
-    enfType "set" xs msg && enfHasAttr' name xs msg;
+    enfIsType "set" xs msg && enfHasAttr' name xs msg;
 
   enfIsClassSig = sig: msg:
     isClassSig sig || throw "${msg}: given value \"${toString sig}\" of primitive nix type \"${typeOf sig}\" is not a valid Typeclass signature";
 
-  enfTypeSig = sig: msg:
+  enfIsTypeSig = sig: msg:
     isTypeSig sig || throw "${msg}: given value \"${toString sig}\" of primitive nix type \"${typeOf sig}\" is not a valid Type signature";
 
   enfIsNT = T: msg:

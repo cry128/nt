@@ -10,7 +10,7 @@
     (this)
     enfHasAttr
     enfHasAttr'
-    enfType
+    enfIsType
     ;
 
   masterkey = "_''traps''_";
@@ -50,11 +50,11 @@ in rec {
 
   openTrapdoorSet = key: xs: xs.${key};
 
-  # TODO: implement a function called enfTypeAny (for cases like this where it might be function or set)
+  # TODO: implement a function called enfIsTypeAny (for cases like this where it might be function or set)
   openTrapdoor = key: T:
     if isFunction T
     then openTrapdoorFn key T
     else
-      assert enfType "set" T "openTrapdoor";
+      assert enfIsType "set" T "openTrapdoor";
         openTrapdoorSet key T;
 }
