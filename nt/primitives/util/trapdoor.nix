@@ -7,10 +7,10 @@
     ;
 
   inherit
-    (this)
+    (this.std)
     enfHasAttr
     enfHasAttr'
-    enfIsType
+    enfIsAttrs
     ;
 in rec {
   masterkey = "_''traps''_";
@@ -53,6 +53,6 @@ in rec {
     if isFunction T
     then openTrapdoorFn key T
     else
-      assert enfIsType "set" T "openTrapdoor";
+      assert enfIsAttrs T "openTrapdoor";
         openTrapdoorSet key T;
 }
