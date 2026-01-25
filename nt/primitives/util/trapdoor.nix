@@ -12,9 +12,8 @@
     enfHasAttr'
     enfIsType
     ;
-
-  masterkey = "_''traps''_";
 in rec {
+  masterkey = "_''traps''_";
   defaultTrapdoorKey = "_'";
   mkTrapdoorKey = id: "${defaultTrapdoorKey}${id}";
   ntTrapdoorKey = mkTrapdoorKey "nt";
