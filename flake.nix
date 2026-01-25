@@ -2,10 +2,13 @@
   description = "NixTypes (nt)";
 
   outputs = _: let
-    # nt depends on the mix subsystem for bootstrapping,
-    # we can fake its dependency on this mwahahahah
+    # Step 1: Bootstrap and blast off (*zooommmmm whoooosshhhhh pppppeeeeeeewww*)
     bootstrap = import ./nt/primitives/bootstrap;
+    # Step 2: Lie to Mix about its real identity (it's not ready for the truth...)
     mix = import ./nt/primitives/mix {this = bootstrap;};
   in
+    # Step 3: Actually import NixTypes
     import ./nt {inherit mix;};
+
+  # Step 4: Like and subscripe!!1!11!!!!!
 }
