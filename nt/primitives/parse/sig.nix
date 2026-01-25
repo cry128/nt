@@ -1,18 +1,16 @@
 {this, ...}: let
   inherit
     (builtins)
-    isString
     split
     stringLength
+    typeOf
     ;
 
   inherit
-    (this)
-    enfIsNT
+    (this.std)
     filterEven
     init
     last
-    ntTrapdoorKey
     nullOr
     stringHead
     stringTail
@@ -34,6 +32,12 @@ in rec {
   isClassSig = sig:
     parseSig sig |> nullOr (result: last result |> isClassSig);
 
+  enfIsClassSig = sig: msg:
+    isClassSig sig || throw "${msg}: given value \"${toString sig}\" of primitive nix type \"${typeOf sig}\" is not a valid Typeclass signature";
+
+  enfIsTypeSig = sig: msg:
+    isTypeSig sig || throw "${msg}: given value \"${toString sig}\" of primitive nix type \"${typeOf sig}\" is not a valid Type signature";
+
   parseTypeSig = sig: let
     result = parseSig sig;
   in
@@ -47,17 +51,6 @@ in rec {
     if result != null && (last result |> isClassName)
     then init result ++ (last result |> stringTail)
     else null;
-
-  # NOTE: unsafe variant, use typeSig if you can't guarantee `isNT T` holds
-  typeSig' = T: T.${ntTrapdoorKey}.sig;
-
-  # NOTE: safe variant, use typeSig' if you can guarantee `isNT T` holds
-  typeSig = T: assert enfIsNT T "nt.typeSig"; typeSig' T;
-
-  toTypeSig = x:
-    if isString x
-    then x
-    else typeSig x;
 
   # NOTE: we're testing how similar `list` is to `toTypeSig type` (non-commutative)
   # NOTE: we measure similarity in the reverse order (ie end of signature is most important)
