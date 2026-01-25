@@ -5,7 +5,7 @@
     # Step 1: Bootstrap and blast off (*zooommmmm whoooosshhhhh pppppeeeeeeewww*)
     bootstrap = import ./nt/primitives/bootstrap;
     # Step 2: Lie to Mix about its real identity (it's not ready for the truth...)
-    mix = import ./nt/primitives/mix {this = bootstrap;};
+    mix = import ./nt/mix {this = bootstrap;};
   in
     # Step 3: Actually import NixTypes
     import ./nt {inherit mix;};

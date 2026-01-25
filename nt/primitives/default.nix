@@ -5,7 +5,6 @@ mix.newMixture inputs (mixture: {
     ./bootstrap
   ];
   submods.public = [
-    ./mix
     # TODO: make ./util private
     ./util
   ];
