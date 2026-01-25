@@ -5,14 +5,14 @@
     attrNames
     elem
     isAttrs
+    isString
+    typeOf
     ;
 
   inherit
     (this)
-    enfIsNT
-    ntTrapdoorKey
+    mkTrapdoorKey
     openTrapdoor
-    toTypeSig
     ;
 in rec {
   # check if a value is an nt type/class
@@ -56,4 +56,29 @@ in rec {
 
   # NOTE safe variant, use `is'` if you can guarantee `isNT T` holds
   is = type: T: assert enfIsNT T "nt.is"; is' type T;
+
+  # NOTE: unsafe variant, use typeSig if you can't guarantee `isNT T` holds
+  typeSig' = T: T.${ntTrapdoorKey}.sig;
+
+  # # NOTE: safe variant, use typeSig' if you can guarantee `isNT T` holds
+  typeSig = T: assert enfIsNT T "nt.typeSig"; typeSig' T;
+
+  toTypeSig = x:
+    if isString x
+    then x
+    else typeSig x;
+
+  # XXX: TODO: move ntTrapdoorKey to nt.nix
+  ntTrapdoorKey = mkTrapdoorKey "nt";
+
+  enfIsType = type: value: msg: let
+    got = typeOf value;
+  in
+    got == type || throw "${msg}: expected primitive nix type \"${type}\" but got \"${got}\"";
+
+  enfIsNT = T: msg:
+    isNT T || throw "${msg}: expected nt compatible type but got \"${toString T}\" of primitive nix type \"${typeOf T}\"";
+
+  enfImpls = type: T: msg:
+    impls type T || throw "${msg}: given type \"${toTypeSig T}\" does not implement typeclass \"${toTypeSig type}\"";
 }

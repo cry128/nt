@@ -16,7 +16,6 @@ in rec {
   masterkey = "_''traps''_";
   defaultTrapdoorKey = "_'";
   mkTrapdoorKey = id: "${defaultTrapdoorKey}${id}";
-  ntTrapdoorKey = mkTrapdoorKey "nt";
 
   mkTrapdoorFn = key: decl:
     assert enfHasAttr "default" decl "mkTrapdoorFn";
