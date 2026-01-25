@@ -9,7 +9,7 @@
   inherit
     (this.std)
     enfHasAttr
-    enfHasAttr'
+    enfHasAttrUnsafe
     enfIsAttrs
     ;
 in rec {
@@ -19,7 +19,7 @@ in rec {
 
   mkTrapdoorFn = key: decl:
     assert enfHasAttr "default" decl "mkTrapdoorFn";
-    assert enfHasAttr' "unlock" decl "mkTrapdoorFn";
+    assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorFn";
     # return trapdoor function
       (x: let
         keys = attrNames decl.unlock;
@@ -32,7 +32,7 @@ in rec {
 
   mkTrapdoorSet = key: decl:
     assert enfHasAttr "default" decl "mkTrapdoorSet";
-    assert enfHasAttr' "unlock" decl "mkTrapdoorSet";
+    assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorSet";
     # return trapdoor set
       let
         keys = attrNames decl.unlock;
