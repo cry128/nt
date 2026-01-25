@@ -1,10 +1,10 @@
 {this, ...}: let
-  inherit
-    (this)
-    ntTrapdoorKey
-    mkTrapdoorFn
-    mkTrapdoorSet
-    ;
+  # inherit
+  #   (this)
+  #   ntTrapdoorKey
+  #   mkTrapdoorFn
+  #   mkTrapdoorSet
+  #   ;
 in {
   # NOTE: Wrap is used to simplify parsing Type/Class declarations
   # NOTE: and therefore must be implemented manually

@@ -1,13 +1,13 @@
 {this, ...}: let
-  inherit
-    (this)
-    enfImpls
-    mkTrapdoorFn
-    mkTrapdoorSet
-    ntTrapdoorKey
-    ntDynamicTrapdoorKey
-    openTrapdoor
-    ;
+  # inherit
+  #   (this)
+  #   enfImpls
+  #   mkTrapdoorFn
+  #   mkTrapdoorSet
+  #   ntTrapdoorKey
+  #   ntDynamicTrapdoorKey
+  #   openTrapdoor
+  #   ;
 in {
   # NOTE: Maybe is used to simplify parsing Type/Class declarations
   # NOTE: and therefore must be implemented manually
