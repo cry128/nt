@@ -5,5 +5,6 @@ mix.newMixture inputs (mixture: {
   ];
   submods.public = [
     ./mix
+    ./units
   ];
 })
