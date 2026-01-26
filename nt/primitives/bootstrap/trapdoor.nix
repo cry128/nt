@@ -39,17 +39,6 @@ in rec {
         ${masterkey} = decl.unlock;
       };
 
-  # XXX: TODO: should we just remove all unsafe functions here?
-  # revealTrapdoorsUnsafe = openTrapdoorUnsafe masterkey;
-  #
-  # openTrapdoorFnUnsafe = key: T: (T masterkey).${key};
-  # openTrapdoorSetUnsafe = key: T: T.${masterkey}.${key};
-  #
-  # openTrapdoorUnsafe = key: T:
-  #   if isFunction T
-  #   then openTrapdoorFnUnsafe key T
-  #   else openTrapdoorSetUnsafe key T;
-
   isTrapdoorFnKey = key: T: isFunction T && (T masterkey) ? ${key};
 
   isTrapdoorSetKey = key: T:
