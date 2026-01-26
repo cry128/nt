@@ -1,8 +1,7 @@
 {this, ...}: let
   inherit
     (builtins)
-    attrNames
-    elem
+    isAttrs
     isFunction
     ;
 
@@ -10,7 +9,12 @@
     (this.std)
     enfHasAttr
     enfHasAttrUnsafe
-    enfIsAttrs
+    ;
+
+  inherit
+    (this.types)
+    Some
+    None
     ;
 in rec {
   masterkey = "_''traps''_";
@@ -21,38 +25,61 @@ in rec {
     assert enfHasAttr "default" decl "mkTrapdoorFn";
     assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorFn";
     # return trapdoor function
-      (x: let
-        keys = attrNames decl.unlock;
-      in
-        if elem key keys
-        then decl.unlock.${key}
-        else if key == masterkey
-        then keys
-        else decl.default);
+      (x:
+        if key == masterkey
+        then decl.unlock
+        else decl.default x);
 
   mkTrapdoorSet = key: decl:
     assert enfHasAttr "default" decl "mkTrapdoorSet";
     assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorSet";
     # return trapdoor set
-      let
-        keys = attrNames decl.unlock;
-      in
-        decl.default
-        // {
-          ${key} = decl.unlock.${key};
-          ${masterkey} = keys;
-        };
-  revealTrapdoors = openTrapdoor masterkey;
+      decl.default
+      // {
+        ${masterkey} = decl.unlock;
+      };
 
-  openTrapdoorFn = key: f: f key;
+  # XXX: TODO: should we just remove all unsafe functions here?
+  # revealTrapdoorsUnsafe = openTrapdoorUnsafe masterkey;
+  #
+  # openTrapdoorFnUnsafe = key: T: (T masterkey).${key};
+  # openTrapdoorSetUnsafe = key: T: T.${masterkey}.${key};
+  #
+  # openTrapdoorUnsafe = key: T:
+  #   if isFunction T
+  #   then openTrapdoorFnUnsafe key T
+  #   else openTrapdoorSetUnsafe key T;
 
-  openTrapdoorSet = key: xs: xs.${key};
+  isTrapdoorFnKey = key: T: isFunction T && (T masterkey) ? ${key};
 
-  # TODO: implement a function called enfIsTypeAny (for cases like this where it might be function or set)
+  isTrapdoorSetKey = key: T:
+    if T ? ${masterkey}
+    then T.${masterkey} ? ${key}
+    else false;
+
+  isTrapdoorKey = key: T:
+    if isAttrs T
+    then isTrapdoorSetKey key T
+    else isTrapdoorFnKey key T;
+
+  openTrapdoorFn = key: T: let
+    unlock = T masterkey;
+  in
+    if isFunction T && unlock ? ${key}
+    then Some unlock.${key}
+    else None;
+
+  openTrapdoorSet = key: T: let
+    unlock = T.${masterkey};
+  in
+    if T ? ${masterkey} && unlock ? ${key}
+    then Some unlock.${key}
+    else None;
+
   openTrapdoor = key: T:
     if isFunction T
     then openTrapdoorFn key T
-    else
-      assert enfIsAttrs T "openTrapdoor";
-        openTrapdoorSet key T;
+    else if isAttrs T
+    then openTrapdoorSet key T
+    else None;
 }
