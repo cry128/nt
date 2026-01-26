@@ -1,10 +1,13 @@
 # XXX: TODO: replace Null with the naive Maybe type
 {this, ...}: let
-  # inherit
-  #   (this)
-  #   ntTrapdoorKey
-  #   mkTrapdoorSet
-  #   ;
+  inherit
+    (this)
+    ntTrapdoorKey
+    ;
+  inherit
+    (this.trapdoor)
+    mkTrapdoorSet
+    ;
 in {
   # NOTE: This is not good for writing type safe code
   # NOTE: it is however efficient for bootstrapping the primitives

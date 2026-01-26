@@ -9,13 +9,21 @@
     ;
 
   inherit
-    (this.util)
+    (this.std)
     filterAttrs
     hasInfix
     mergeAttrsList
     nameValuePair
-    projectOnto
     removeSuffix
+    ;
+
+  inherit
+    (this.parse)
+    projectOnto
+    ;
+
+  inherit
+    (this.types)
     Wrap
     ;
 

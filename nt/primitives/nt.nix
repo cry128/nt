@@ -8,17 +8,29 @@
     ;
 
   inherit
-    (this.util)
+    (this)
     enfIsType
-    enfIsClassSig
+    typeSig
+    ;
+
+  inherit
+    (this.std)
     flipCurry
+    removeAttrsRec
+    ;
+
+  inherit
+    (this.parse)
+    enfIsClassSig
     hasAttrAt
     mkTrapdoorSet
     ntTrapdoorKey
     parseClassSig
     projectOnto
-    removeAttrsRec
-    typeSig
+    ;
+
+  inherit
+    (this.types)
     Wrap
     ;
 

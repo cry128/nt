@@ -10,7 +10,7 @@
     ;
 
   inherit
-    (this)
+    (this.trapdoor)
     mkTrapdoorKey
     openTrapdoor
     ;

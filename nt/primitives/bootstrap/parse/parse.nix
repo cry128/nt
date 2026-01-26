@@ -16,6 +16,11 @@
     (this.std)
     enfIsAttrs
     ;
+
+  inherit
+    (this.types)
+    Wrap
+    ;
 in rec {
   # form: getAttrAt :: list string -> set -> null | Wrap Any
   # given path as a list of strings, return that value of an

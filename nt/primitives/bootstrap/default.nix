@@ -29,10 +29,12 @@ let
     delegate;
 
   this = bootstrap {inherit this bootstrap;} [
+    ./nt.nix
     {
       std = ./std/bootstrap.nix;
       types = ./types/bootstrap.nix;
       parse = ./parse/bootstrap.nix;
+      trapdoor = ./trapdoor.nix;
     }
   ];
 in

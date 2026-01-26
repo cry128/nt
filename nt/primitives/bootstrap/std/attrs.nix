@@ -1,4 +1,4 @@
-{...}: let
+{this, ...}: let
   inherit
     (builtins)
     attrNames
@@ -13,6 +13,12 @@
     removeAttrs
     tail
     typeOf
+    ;
+
+  inherit
+    (this)
+    flipCurry
+    id
     ;
 in rec {
   enfIsAttrs = value: msg: let
