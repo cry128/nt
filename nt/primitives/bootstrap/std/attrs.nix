@@ -34,6 +34,13 @@ in rec {
   enfHasAttr = name: xs: msg:
     enfIsAttrs xs msg && enfHasAttrUnsafe name xs msg;
 
+  getAttrOr = name: f: xs:
+    if xs ? ${name}
+    then xs.${name}
+    else f xs;
+
+  getAttrDefault = name: default: getAttrOr name (_: default);
+
   mergeAttrsList = list: let
     # `binaryMerge start end` merges the elements at indices `index` of `list` such that `start <= index < end`
     # Type: Int -> Int -> Attrs
