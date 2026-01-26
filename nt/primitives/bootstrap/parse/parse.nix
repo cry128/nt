@@ -1,4 +1,4 @@
-# XXX: TODO: use the custom Null type instance instead of the Wrap type
+# XXX: TODO: use the Maybe/Null type instance instead of the Wrap type
 {this, ...}: let
   inherit
     (builtins)
