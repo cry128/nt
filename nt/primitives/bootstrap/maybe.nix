@@ -64,8 +64,8 @@ in rec {
   in
     assert enfIsMaybe value "mapMaybe"; value;
 
-  mapSome = f: mapMaybe f id;
-  mapNone = mapMaybe id;
+  mapSome = f: mapMaybe f (_: None);
+  mapNone = mapMaybe (x: Some x);
 
   # Utility Functions
   boolToMaybe = x:
