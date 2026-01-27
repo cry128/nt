@@ -1,12 +1,22 @@
 {this, ...}: let
   inherit
     (builtins)
-    all
     attrNames
     elem
-    isAttrs
+    getAttr
     isString
     typeOf
+    ;
+
+  inherit
+    (this.std)
+    contains
+    ;
+
+  inherit
+    (this.maybe)
+    isSome
+    mapMaybe
     ;
 
   inherit
@@ -15,53 +25,56 @@
     openTrapdoor
     ;
 in rec {
+  openNT = openTrapdoor ntTrapdoorKey;
+
   # check if a value is an nt type/class
-  isNT = T: let
-    content = openTrapdoor ntTrapdoorKey T;
-    names = attrNames content;
-  in
-    isAttrs content
-    && all (name: elem name names) ["sig" "derive" "ops" "req"];
+  isNT = T:
+    openNT T
+    |> mapMaybe (content: attrNames content |> contains ["sig" "derive" "ops" "req"])
+    |> isSome;
 
-  isNixClass = T: let
-    content = openTrapdoor ntTrapdoorKey T;
-  in
-    isAttrs content
-    && attrNames content == ["sig" "derive" "ops" "req"];
+  isNTClass = T:
+    openNT T
+    |> mapMaybe (content: attrNames content == ["sig" "derive" "ops" "req"])
+    |> isSome;
 
-  isNixType = T: let
-    content = openTrapdoor ntTrapdoorKey T;
-  in
-    isAttrs content
-    && attrNames content == ["instance" "sig" "derive" "ops" "req"]
-    && content.instance == false;
+  isNTType = T:
+    openNT T
+    |> mapMaybe (content:
+      attrNames content
+      == ["instance" "sig" "derive" "ops" "req"]
+      && content.instance == false)
+    |> isSome;
 
-  isNixTypeInstance = T: let
-    content = openTrapdoor ntTrapdoorKey T;
-  in
-    isAttrs content
-    && attrNames content == ["instance" "sig" "derive" "ops" "req"]
-    && content.instance == true;
+  isNTInstance = T:
+    openNT T
+    |> mapMaybe (content:
+      attrNames content
+      == ["instance" "sig" "derive" "ops" "req"]
+      && content.instance == true)
+    |> isSome;
 
-  # check if a type/class implements a signature
-  # NOTE: unsafe variant, use typeSig if you can't guarantee `isNT T` holds
-  impls' = type: T: elem (toTypeSig type) T.${ntTrapdoorKey}.derive;
+  # XXX: TODO: Some of these functions are unsafe but aren't marked as unsafe
+  # XXX: TODO: because they WILL BE safe once I implement isomorphisms between types
+  # XXX: TODO: especially implicit isomorphism from nix primitives to NT types
 
-  # NOTE safe variant, use impls' if you can guarantee `isNT T` holds
-  impls = type: T: assert enfIsNT T "nt.impls"; impls' type T;
+  impls = type: T:
+    assert enfIsNT T "nt.impls";
+      openNT T
+      |> mapMaybe (content: content.derive |> elem (toTypeSig type))
+      |> isSome;
 
-  # check if a type/class implements a signature
-  # NOTE: unsafe variant, use `is` if you can't guarantee `isNT T` holds
-  is' = type: T: T.${ntTrapdoorKey}.sig == toTypeSig type;
+  is = type: T:
+    assert enfIsNT T "nt.is";
+      openNT T
+      |> mapMaybe (content: content.sig == toTypeSig type)
+      |> isSome;
 
-  # NOTE safe variant, use `is'` if you can guarantee `isNT T` holds
-  is = type: T: assert enfIsNT T "nt.is"; is' type T;
-
-  # NOTE: unsafe variant, use typeSig if you can't guarantee `isNT T` holds
-  typeSig' = T: T.${ntTrapdoorKey}.sig;
-
-  # # NOTE: safe variant, use typeSig' if you can guarantee `isNT T` holds
-  typeSig = T: assert enfIsNT T "nt.typeSig"; typeSig' T;
+  typeSig = T:
+    assert enfIsNT T "nt.typeSig";
+      openNT T
+      |> mapMaybe (getAttr "sig")
+      |> isSome;
 
   toTypeSig = x:
     if isString x
@@ -71,6 +84,7 @@ in rec {
   # XXX: TODO: move ntTrapdoorKey to nt.nix
   ntTrapdoorKey = mkTrapdoorKey "nt";
 
+  # TODO: rename enfIsType -> enfIsPrimitive
   enfIsType = type: value: msg: let
     got = typeOf value;
   in
