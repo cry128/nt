@@ -31,6 +31,7 @@ let
   this = bootstrap {inherit this bootstrap;} [
     ./nt.nix
     {
+      bootstrap = _: bootstrap;
       std = ./std/bootstrap.nix;
       parse = ./parse/bootstrap.nix;
 
