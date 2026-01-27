@@ -27,7 +27,7 @@
 in rec {
   openNT = openTrapdoor ntTrapdoorKey;
 
-  # check if a value is an nt type/class
+  # check if a value is NixTypes compatible
   isNT = T:
     openNT T
     |> mapMaybe (content: attrNames content |> contains ["sig" "derive" "ops" "req"])
@@ -54,9 +54,8 @@ in rec {
       && content.instance == true)
     |> isSome;
 
-  # XXX: TODO: Some of these functions are unsafe but aren't marked as unsafe
-  # XXX: TODO: because they WILL BE safe once I implement isomorphisms between types
-  # XXX: TODO: especially implicit isomorphism from nix primitives to NT types
+  # XXX: TODO: Implement isomorphisms between types especially
+  # XXX: TODO: implicit isomorphism from nix primitives to NT types.
 
   impls = type: T:
     assert enfIsNT T "nt.impls";
@@ -81,11 +80,9 @@ in rec {
     then x
     else typeSig x;
 
-  # XXX: TODO: move ntTrapdoorKey to nt.nix
   ntTrapdoorKey = mkTrapdoorKey "nt";
 
-  # TODO: rename enfIsType -> enfIsPrimitive
-  enfIsType = type: value: msg: let
+  enfIsPrimitive = type: value: msg: let
     got = typeOf value;
   in
     got == type || throw "${msg}: expected primitive nix type \"${type}\" but got \"${got}\"";
