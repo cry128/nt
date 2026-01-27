@@ -17,8 +17,8 @@ in rec {
   Some = Maybe true;
   None = Maybe false null;
 
-  # Pattern Matching (unsafe and safe variants)
-  isMaybe = T: attrNames T == ["_some" "_value"];
+  # Type Checking
+  isMaybe = T: isAttrs T && attrNames T == ["_some" "_value"];
   enfIsMaybe = T: msg: let
     throw' = got: throw "${msg}: expected naive type Maybe but got ${got}";
     attrs =
@@ -27,11 +27,8 @@ in rec {
       |> concatStringsSep ", ";
   in
     if isAttrs T
-    then throw' "attribute set with structure [${attrs}]"
+    then isMaybe T || throw' "attribute set with structure [${attrs}]"
     else throw' "value \"${toString T}\" of primitive type \"${typeOf T}\"";
-
-  # isSome = T: isMaybe T && T._some;
-  # isNone = T: isMaybe T && ! T._some;
 
   isSome = T:
     assert enfIsMaybe T "isMaybeSome";
