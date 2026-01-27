@@ -1,15 +1,9 @@
-# XXX: TODO: use the Maybe/Null type instance instead of the Wrap type
 {this, ...}: let
   inherit
     (builtins)
     foldl'
-    hasAttr
     isAttrs
-    ;
-
-  inherit
-    (this)
-    is
+    mapAttrs
     ;
 
   inherit
@@ -18,50 +12,54 @@
     ;
 
   inherit
-    (this.types)
-    Wrap
+    (this.maybe)
+    isSome
+    mapSome
+    unwrapMaybe
+    Some
+    None
     ;
 in rec {
-  # form: getAttrAt :: list string -> set -> null | Wrap Any
-  # given path as a list of strings, return that value of an
-  # attribute set at that path
+  # getAttrAt :: [String] -> Attrs -> Maybe a
+  # Given an attribute set path as a list of strings,
+  # returns the value of an attribute set at that path (Some)
+  # if it exists, otherwise returns None.
   getAttrAt = path: xs:
     assert enfIsAttrs xs "getAttrAt";
-      foldl' (left: right:
-        if left != null && isAttrs left.value && hasAttr right left.value
-        then Wrap left.value.${right}
-        else null)
-      (Wrap xs)
+      foldl' (acc: el:
+        acc
+        |> mapSome (x:
+          if x ? ${el}
+          then Some x.${el}
+          else None))
+      (Some xs)
       path;
 
-  # form: hasAttrAt :: list string -> set -> bool
-  # given path as a list of strings, return that value of an
-  # attribute set at that path
+  # hasAttrAt :: [String] -> Attrs -> Bool
+  # Given an attribute set path as a list of strings,
+  # returns a boolean indicating whether that path exists.
   hasAttrAt = path: xs:
     assert enfIsAttrs xs "hasAttrAt";
-      getAttrAt path xs != null; # NOTE: inefficient (im lazy)
+      getAttrAt path xs |> isSome; # NOTE: inefficient (im lazy)
 
+  # recmapFrom :: [String] -> ([String] -> Attrs -> a) -> Attrs -> a | Attrs a
   # Alternative to mapAttrsRecursiveCond
   # Allows mapping directly from a child path
-  recmap = let
-    recmapFrom = path: f: T:
-      if builtins.isAttrs T && ! is Wrap T
-      then builtins.mapAttrs (attr: leaf: recmapFrom (path ++ [attr]) f leaf) T
-      else f path T;
-  in
-    recmapFrom [];
+  recmapFrom = path: f: T:
+    if isAttrs T
+    then mapAttrs (attr: leaf: recmapFrom (path ++ [attr]) f leaf) T
+    else f path T;
+
+  # recmap :: ([String] -> Attrs -> a) -> Attrs -> a | Attrs a
+  recmap = recmapFrom [];
 
   projectOnto = dst: src:
     dst
     |> recmap
     (path: dstLeaf: let
       srcLeaf = getAttrAt path src;
-      newLeaf =
-        if srcLeaf != null
-        then srcLeaf
-        else dstLeaf;
     in
-      if is Wrap newLeaf
-      then newLeaf.value
-      else newLeaf);
+      if isSome srcLeaf
+      then unwrapMaybe srcLeaf
+      else dstLeaf);
 }
