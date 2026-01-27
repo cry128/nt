@@ -4,7 +4,9 @@ mix.newMixture inputs (mixture: {
     ./devshells.nix
     ./nix-unit.nix
   ];
-  submods.private = [
+  # TODO: make .util.nix private
+  submods.public = [
     ./util.nix
+    ../tests
   ];
 })
