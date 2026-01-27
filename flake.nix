@@ -31,6 +31,11 @@
     base = {
       inherit mix;
       flake = self;
+      # XXX: TODO: implement mix.extend instead of this
+      deps = {
+        inherit nixpkgs nix-unit;
+        systems = import systems;
+      };
     };
 
     # flake dependencies
@@ -47,7 +52,9 @@
   in
     newMixture base (mixture: {
       includes.public = [
-        (extend ./flake deps)
+        # XXX: TODO: implement mix.extend
+        # (extend ./flake deps)
+        ./flake
         # Step 3: Actually import NixTypes
         ./nt
       ];
