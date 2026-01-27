@@ -17,7 +17,7 @@
 
   inherit
     (this)
-    flipCurry
+    flip
     id
     ;
 in rec {
@@ -67,7 +67,7 @@ in rec {
     next = parts.wrong;
   in
     xs
-    |> flipCurry removeAttrs here
+    |> flip removeAttrs here
     |> mapAttrs (name:
       if ! elem name next
       then id

@@ -15,7 +15,7 @@
 
   inherit
     (this.std)
-    flipCurry
+    flip
     removeAttrsRec
     ;
 
@@ -70,7 +70,7 @@
 
     # XXX: TODO: having to specify the full namespace sucks :(
 
-    matches = partition (flipCurry hasAttrAt ops) reqPaths;
+    matches = partition (flip hasAttrAt ops) reqPaths;
 
     pathsMissing = matches.wrong;
     opsSelf = removeAttrsRec matches.right ops;

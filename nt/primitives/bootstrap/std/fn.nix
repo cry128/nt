@@ -1,6 +1,6 @@
 {...}: {
   id = x: x;
-  flipCurry = f: a: b: f b a;
+  flip = f: a: b: f b a;
 
   # not sure where else to put this...
   nullOr = f: x:
