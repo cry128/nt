@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+nix flake check --show-trace 2>&1 \
+  | rg -F 'at /nix/store'         \
+  | cut -d'/' -f5-                \
+  | uniq
