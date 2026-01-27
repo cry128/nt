@@ -1,12 +1,16 @@
 {...}: let
   inherit
     (builtins)
+    all
+    elem
     elemAt
     foldl'
     genList
     length
     ;
 in rec {
+  contains = sub: list: all (x: elem x list) sub;
+
   sublist = start: count: list: let
     len = length list;
   in
@@ -45,14 +49,14 @@ in rec {
     fold' 0;
 
   # REF: pkgs.lib.lists.findFirstIndex [MODIFIED]
-  firstIndexOf = x: list: let
+  firstIndexWhere = pred: default: list: let
     resultIndex =
       foldl' (
         index: el:
           if index < 0
           then
             # No match yet before the current index, we need to check the element
-            if el == x
+            if pred el
             then
               # We have a match! Turn it into the actual index to prevent future iterations from modifying it
               -index - 1
@@ -66,6 +70,16 @@ in rec {
       list;
   in
     if resultIndex < 0
-    then null
+    then default
     else resultIndex;
+
+  firstIndexOf = x: firstIndexWhere (el: el == x);
+
+  # WARNING: returns `default` in the edgecase `pred el && el == null`
+  firstWhere = pred: default: list: let
+    index = firstIndexWhere pred null list;
+  in
+    if index == null
+    then default
+    else elemAt list index;
 }

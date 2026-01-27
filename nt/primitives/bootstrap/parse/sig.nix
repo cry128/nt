@@ -63,7 +63,7 @@ in rec {
   #   S = toTypeSig type |> parseTypeSig |> map trimClassPrefix;
 
   #   progress = l: x: let
-  #     index = firstIndexOf x l;
+  #     index = firstIndexOf x null l;
   #   in
   #     if index == null
   #     then []
