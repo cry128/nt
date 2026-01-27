@@ -8,6 +8,7 @@
     hasAttr
     head
     length
+    listToAttrs
     mapAttrs
     partition
     removeAttrs
@@ -40,6 +41,11 @@ in rec {
     else f xs;
 
   getAttrDefault = name: default: getAttrOr name (_: default);
+
+  genAttrs = names: f:
+    names
+    |> map (n: nameValuePair n (f n))
+    |> listToAttrs;
 
   mergeAttrsList = list: let
     # `binaryMerge start end` merges the elements at indices `index` of `list` such that `start <= index < end`
