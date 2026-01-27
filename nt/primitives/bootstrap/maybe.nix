@@ -1,10 +1,15 @@
-{...}: let
+{this, ...}: let
   inherit
     (builtins)
     attrNames
     concatStringsSep
     isAttrs
     typeOf
+    ;
+
+  inherit
+    (this.std)
+    id
     ;
 in rec {
   # NOTE: Maybe intentionally doesn't use the NixTypes.
@@ -31,11 +36,11 @@ in rec {
     else throw' "value \"${toString T}\" of primitive type \"${typeOf T}\"";
 
   isSome = T:
-    assert enfIsMaybe T "isMaybeSome";
+    assert enfIsMaybe T "isSome";
       T._some;
 
   isNone = T:
-    assert enfIsMaybe T "isMaybeNone";
+    assert enfIsMaybe T "isNone";
       ! T._some;
 
   # Monadic Bind Operation
@@ -43,6 +48,24 @@ in rec {
     if isSome T
     then Some (f T._value)
     else T;
+
+  # Unwrap Operations
+  # Lift a value out of the monadic context.
+  unwrapMaybe = T:
+    assert enfIsMaybe T "unwrapMaybe"; T._value;
+
+  # Map Operations
+  # Lift a value out of the monadic context and expect a new monadic.
+  mapMaybe = f: g: T: let
+    value =
+      if isSome T
+      then f T._value
+      else g T._value;
+  in
+    assert enfIsMaybe value "mapMaybe"; value;
+
+  mapSome = f: mapMaybe f id;
+  mapNone = mapMaybe id;
 
   # Utility Functions
   boolToMaybe = x:
