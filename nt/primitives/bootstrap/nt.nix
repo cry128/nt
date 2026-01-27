@@ -81,6 +81,7 @@ in rec {
     else typeSig x;
 
   ntTrapdoorKey = mkTrapdoorKey "nt";
+  ntDynamicTrapdoorKey = mkTrapdoorKey "ntDyn";
 
   enfIsPrimitive = type: value: msg: let
     got = typeOf value;
