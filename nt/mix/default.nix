@@ -2,10 +2,17 @@
   inherit
     (builtins)
     attrNames
-    attrValues
     hasAttr
+    isAttrs
+    isFunction
     listToAttrs
     removeAttrs
+    typeOf
+    ;
+
+  inherit
+    (this)
+    enfIsPrimitive
     ;
 
   inherit
@@ -38,14 +45,36 @@
 in rec {
   # by default the imported module is given the basename of its path
   # but you can set it manually by using the `mix.mod` function.
-  importMods = list: inputs:
+
+  importMod = path: inputs:
+    assert enfIsPrimitive "path" path "importMod"; let
+      mod = import path;
+    in
+      if isAttrs mod
+      then mod
+      else let
+        modResult = mod inputs;
+      in
+        # TODO: create a better version of toString that can handle sets, lists, and null
+        assert isFunction mod
+        || throw ''
+          Mix modules expect primitive type "set" or "lambda" (returning "set").
+          Got primitive type "${typeOf mod}" instead.
+        '';
+        assert isAttrs modResult
+        || throw ''
+          Mix module provided as primitive type "lambda" must return primitive type "set"!
+          Got primitive return type "${typeOf modResult} instead."
+        ''; modResult;
+
+  mkSubMods = list: inputs:
     list
-    |> map (path: nameValuePair (modNameFromPath path) (import path inputs))
+    |> map (path: nameValuePair (modNameFromPath path) (importMod path inputs))
     |> listToAttrs;
 
-  importMergeMods = list: inputs:
+  mkIncludes = list: inputs:
     list
-    |> map (path: (import path inputs))
+    |> map (path: (importMod path inputs))
     |> mergeAttrsList;
 
   # create a new and empty mixture
@@ -74,8 +103,8 @@ in rec {
     # mixture components are ordered based on shadowing
     mixture =
       inputs'
-      // importMods meta.submods.public inputsWithThis
-      // importMergeMods meta.includes.public inputsWithThis
+      // mkSubMods meta.submods.public inputsWithThis
+      // mkIncludes meta.includes.public inputsWithThis
       // content;
 
     # this = {
@@ -139,11 +168,10 @@ in rec {
     # privateMixture = add [private] protectedMixture;
 
     mkInterface = name: mixture: base:
-      mergeAttrsList
-      (attrValues <| importMods meta.includes.${name} mixture)
-      ++ [
+      mergeAttrsList [
         base
-        (importMods meta.submods.${name} mixture)
+        (mkIncludes meta.includes.${name} mixture)
+        (mkSubMods meta.submods.${name} mixture)
       ];
     # XXX: TODO
     # NOTE: public submodules are still DESCENDENTS
