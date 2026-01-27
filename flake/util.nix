@@ -1,12 +1,17 @@
 {
   flake,
-  systems,
-  nixpkgs,
+  deps,
   ...
 }: let
   inherit
     (builtins)
     attrValues
+    ;
+
+  inherit
+    (deps)
+    systems
+    nixpkgs
     ;
 in {
   forAllSystems = f:
@@ -15,6 +20,10 @@ in {
         inherit system;
         allowUnfree = false;
         allowBroken = false;
-        overlays = attrValues flake.overlays;
+        overlays = attrValues (
+          if flake ? overlays
+          then flake.overlays
+          else {}
+        );
       }));
 }
