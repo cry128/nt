@@ -21,9 +21,8 @@ in {
 
     inherit
       (maybe-mod)
-      Maybe
+      unwrapSome
       Some
-      None
       ;
   in {
     expr = Some true;
@@ -33,9 +32,7 @@ in {
           derive = ["nt::&Maybe"];
           instance = true;
           ops = {
-            "nt::&Maybe" = {
-              unwrap = f: self: f self.${bootstrap.ntDynamicTrapdoorKey}.value;
-            };
+            "nt::&Maybe".unwrap = unwrapSome;
           };
           req = {};
           sig = "nt::Some";

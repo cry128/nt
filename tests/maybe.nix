@@ -16,7 +16,13 @@
     mkTrapdoorSet
     openTrapdoor
     ;
-in {
+in rec {
+  unwrapMaybe = f: self:
+    assert enfImpls "nt::&Maybe" self "nt::&Maybe.unwrap";
+      (self |> openTrapdoor ntTrapdoorKey).ops."nt::&Maybe".unwrap f self;
+  unwrapSome = f: self: f (self |> openTrapdoor ntDynamicTrapdoorKey).value;
+  unwrapNone = f: self: null;
+
   # NOTE: Maybe is used to simplify parsing Type/Class declarations
   # NOTE: and therefore must be implemented manually
   Maybe = let
@@ -29,9 +35,7 @@ in {
   in
     mkTrapdoorFn {
       default = {
-        unwrap = T:
-          assert enfImpls "nt::&Maybe" T "nt::&Maybe.unwrap";
-            (T |> openTrapdoor ntTrapdoorKey).ops."nt::&Maybe".unwrap;
+        unwrap = unwrapMaybe;
       };
       unlock.${ntTrapdoorKey} = meta false;
     };
@@ -42,7 +46,7 @@ in {
       sig = "nt::Some";
       derive = ["nt::&Maybe"];
       ops = {
-        "nt::&Maybe".unwrap = f: self: f self.${ntDynamicTrapdoorKey}.value;
+        "nt::&Maybe".unwrap = unwrapSome;
       };
       req = {};
     };
@@ -67,15 +71,17 @@ in {
       sig = "nt::None";
       derive = ["nt::&Maybe"];
       ops = {
-        "nt::&Maybe".map = f: self: self;
+        "nt::&Maybe".unwrap = unwrapNone;
       };
       req = {};
     };
   in
     mkTrapdoorFn {
-      default = mkTrapdoorSet ntTrapdoorKey {
+      default = mkTrapdoorSet {
         default = {};
-        unlock = meta true;
+        unlock = {
+          ${ntTrapdoorKey} = meta true;
+        };
       };
       unlock.${ntTrapdoorKey} = meta false;
     };
