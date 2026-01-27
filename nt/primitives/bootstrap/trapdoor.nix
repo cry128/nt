@@ -21,16 +21,16 @@ in rec {
   defaultTrapdoorKey = "_'";
   mkTrapdoorKey = id: "${defaultTrapdoorKey}${id}";
 
-  mkTrapdoorFn = key: decl:
+  mkTrapdoorFn = decl:
     assert enfHasAttr "default" decl "mkTrapdoorFn";
     assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorFn";
     # return trapdoor function
       (x:
-        if key == masterkey
+        if x == masterkey
         then decl.unlock
         else decl.default x);
 
-  mkTrapdoorSet = key: decl:
+  mkTrapdoorSet = decl:
     assert enfHasAttr "default" decl "mkTrapdoorSet";
     assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorSet";
     # return trapdoor set
