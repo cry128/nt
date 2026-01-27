@@ -47,8 +47,8 @@ in rec {
   # unwrapSome = unwrapMaybe (v: v);
   # unwrapNone = f: unwrapMaybe f (v: v);
 
-  # Map (Monadic Bind Operation)
-  mapMaybe = f: T:
+  # Monadic Bind Operation
+  bindMaybe = f: T:
     if isSome T
     then Some (f T._value)
     else T;
