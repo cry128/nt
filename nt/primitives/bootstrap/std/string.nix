@@ -22,4 +22,12 @@ in rec {
 
   hasInfix = infix: content:
     match ".*${escapeRegex infix}.*" "${content}" != null;
+
+  removeSuffix = suffix: str: let
+    sufLen = stringLength suffix;
+    sLen = stringLength str;
+  in
+    if sufLen <= sLen && suffix == substring (sLen - sufLen) sufLen str
+    then substring 0 (sLen - sufLen) str
+    else str;
 }
