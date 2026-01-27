@@ -12,7 +12,7 @@
     ;
 
   inherit
-    (this.types)
+    (this.maybe)
     Some
     None
     ;

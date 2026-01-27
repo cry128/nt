@@ -34,6 +34,8 @@ let
       std = ./std/bootstrap.nix;
       types = ./types/bootstrap.nix;
       parse = ./parse/bootstrap.nix;
+
+      maybe = ./maybe.nix;
       trapdoor = ./trapdoor.nix;
     }
   ];

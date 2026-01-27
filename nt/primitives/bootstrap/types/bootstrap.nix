@@ -2,6 +2,5 @@
 # WARNING: this file is strictly for bootstrapping nt
 {bootstrap, ...} @ inputs:
 bootstrap inputs [
-  ./maybe.nix
   ./wrap.nix
 ]
