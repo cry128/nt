@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+import re
+import sys
+import subprocess
+from typing import Iterable
+from string import printable
+from subprocess import CompletedProcess
+
+ENCODING = 'utf-8'
+ANSI_RE = re.compile(rb'\x1B\[[0-?]*[ -/]*[@-~]')
+
+def zip_n(l: Iterable, n: int) -> zip:
+    return zip(*[l[i:] for i in range(n)])
+
+def run_tests() -> CompletedProcess:
+    return subprocess.run(
+        ["nix-unit", "tests"],
+        capture_output=True)
+
+def sanitize_bytes(b: bytes, encoding='utf-8', errors='replace') -> str:
+    # remove ANSI escapes first
+    b = ANSI_RE.sub(b'', b)
+    # decode (replace undecodable bytes)
+    s = b.decode(encoding, errors=errors)
+    # remove control chars except newline/tab
+    s = ''.join(ch for ch in s if ch.isprintable() or ch in '\n\t')
+    return s
+
+def sanitize_nix(s: str) -> str:
+    s = s.replace('«', '"«').replace('»', '»"')
+    return s
+
+def parse_result(stderr: bytes, index: int) -> None:
+    line_start = index
+    line_end = 0
+    line = '' # exists solely for debugging
+    lines_lhs = []
+    lines_rhs = []
+
+    find_newline = lambda: stderr.index('\n', line_start) 
+    def progress() -> None:
+        nonlocal line_start, line_end, line
+        nonlocal lines_lhs, lines_rhs
+        line_end = find_newline()
+        line = stderr[line_start:line_end]
+        line_start = line_end + 1
+        # NOTE: exploit the fact that nix-unit always aligns
+        # NOTE: itself to the $COLUMNS environment variable
+        # NOTE: rounded down to the nearest odd number
+        midpoint = len(line) // 2 + 1
+        lhs = line[2 : midpoint - 1]
+        rhs = line[midpoint + 2 : ]
+        lines_lhs.append(lhs)
+        lines_rhs.append(rhs)
+
+    # header is two lines
+    for i in range(2):
+        line_start = find_newline() + 1
+
+    progress()
+    while True:
+        progress()
+        if not len(line) or line[0] != '.':
+            break
+
+    lines_lhs = sanitize_nix(''.join(lines_lhs))
+    lines_rhs = sanitize_nix(''.join(lines_rhs))
+    return lines_lhs, lines_rhs
+
+def main() -> None:
+    result = run_tests()
+    stderr = sanitize_bytes(result.stderr)
+
+    # delimiter = '❌'.encode(ENCODING)
+    # error_indices = [i for i, b in enumerate(zip_n(stderr, len(delimiter))) if bytes(b) == delimiter]   
+    # for index in error_indices:
+    #     parse_result(stderr, index)
+    
+    error_indices = [i for i, c in enumerate(stderr) if c == '❌']   
+    for index in error_indices:
+        lhs, rhs = parse_result(stderr, index)
+        print(lhs)
+        print()
+        print(rhs)
+        print('\n\n\n')
+    
+    
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('[!] Interrupt (SIGINT)', file=sys.stderr)
+        sys.exit(1)
+    except EOFError:
+        print('[!] Interrupt (EOF)', file=sys.stderr)
+        sys.exit(1)
