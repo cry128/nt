@@ -4,8 +4,4 @@ mix.newMixture inputs (mixture: {
     ./nt.nix
     ./bootstrap
   ];
-  submods.public = [
-    # TODO: make ./util private
-    ./util
-  ];
 })
