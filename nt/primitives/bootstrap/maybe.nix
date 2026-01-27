@@ -38,32 +38,13 @@ in rec {
     assert enfIsMaybe T "isMaybeNone";
       ! T._some;
 
-  # TODO: ensure you check isNone if isSome fails (otherwise it could be another type!)
-  # Unwrap (Monadic Return Operation)
-  # unwrapMaybe = f: g: T:
-  #   if isSome T
-  #   then f T._value_
-  #   else g T._value_;
-  # unwrapSome = unwrapMaybe (v: v);
-  # unwrapNone = f: unwrapMaybe f (v: v);
-
   # Monadic Bind Operation
   bindMaybe = f: T:
     if isSome T
     then Some (f T._value)
     else T;
 
-  # Conditionals
-  # someOr = f: T:
-  #   if isSome T
-  #   then T
-  #   else f T;
-
-  # noneOr = f: T:
-  #   if isNone T
-  #   then T
-  #   else f T;
-
+  # Utility Functions
   boolToMaybe = x:
     if x
     then Some true
@@ -73,6 +54,4 @@ in rec {
     if x == null
     then None
     else Some x;
-
-  maybeTobool = isSome;
 }
