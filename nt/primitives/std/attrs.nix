@@ -7,7 +7,7 @@
     ;
 
   inherit
-    (this.std)
+    (this)
     enfIsAttrs
     ;
 

@@ -12,20 +12,21 @@
     ;
 
   inherit
-    (this.std)
-    contains
-    ;
-
-  inherit
-    (this.maybe)
-    isSome
-    bindMaybe
-    ;
-
-  inherit
     (this.trapdoor)
     mkTrapdoorKey
     openTrapdoor
+    ;
+
+  inherit
+    (this.std)
+    contains
+    not
+    ;
+
+  inherit
+    (this.std.maybe)
+    isSome
+    bindMaybe
     ;
 in rec {
   ntTrapdoorKey = mkTrapdoorKey "nt";
@@ -34,7 +35,7 @@ in rec {
   openNT = openTrapdoor ntTrapdoorKey;
 
   # check if a value is NOT NixTypes compatible
-  isPrimitive = ! isNT;
+  isPrimitive = not isNT;
 
   # check if a value is NixTypes compatible
   isNT = T:

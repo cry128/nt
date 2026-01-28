@@ -10,28 +10,28 @@
   inherit
     (this)
     enfIsType
+    enfIsClassSig
+    ntTrapdoorKey
+    parseClassSig
     typeSig
+    ;
+
+  inherit
+    (this.trapdoor)
+    mkTrapdoorSet
     ;
 
   inherit
     (this.std)
     flip
+    hasAttrAt
+    projectOnto
     recdef
     removeAttrsRec
     ;
 
   inherit
-    (this.parse)
-    enfIsClassSig
-    hasAttrAt
-    mkTrapdoorSet
-    ntTrapdoorKey
-    parseClassSig
-    projectOnto
-    ;
-
-  inherit
-    (this.types)
+    (this.std.terminal)
     Terminal
     ;
 

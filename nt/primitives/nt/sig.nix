@@ -15,12 +15,6 @@
     ;
 
   inherit
-    (this.maybe)
-    bindMaybe
-    isSome
-    ;
-
-  inherit
     (this.std)
     filterEven
     init
@@ -28,6 +22,12 @@
     nullOr
     stringHead
     stringTail
+    ;
+
+  inherit
+    (this.std.maybe)
+    bindMaybe
+    isSome
     ;
 in rec {
   parseSig = sig: let

@@ -11,7 +11,7 @@
     ;
 
   inherit
-    (this.maybe)
+    (this.std.maybe)
     Some
     None
     ;

@@ -10,7 +10,7 @@
     ;
 
   inherit
-    (nt.parse)
+    (nt)
     projectOnto
     ;
 in {

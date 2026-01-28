@@ -10,10 +10,6 @@
   inherit
     (nt)
     enfIsPrimitive
-    ;
-
-  inherit
-    (nt.std)
     hasInfix
     mergeAttrsList
     nameValuePair
