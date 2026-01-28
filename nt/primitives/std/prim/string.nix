@@ -30,4 +30,8 @@ in rec {
     if sufLen <= sLen && suffix == substring (sLen - sufLen) sufLen str
     then substring 0 (sLen - sufLen) str
     else str;
+
+  prefix = prefix: str: "${prefix}${str}";
+  suffix = suffix: str: "${str}${suffix}";
+  surround = prefix: suffix: str: "${prefix}${str}${suffix}";
 }
