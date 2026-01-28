@@ -1,4 +1,9 @@
-{...}: {
+{...}: let
+  inherit
+    (builtins)
+    isFunction
+    ;
+in rec {
   id = x: x;
 
   # syntactic sugar for curry flipping
@@ -15,4 +20,10 @@
     if x != null
     then f x
     else x;
+
+  not = f:
+    if isFunction f
+    then x: not (f x)
+    # WARNING: assume isBool holds (or fail)
+    else ! f;
 }
