@@ -31,7 +31,7 @@
 
   inherit
     (this.types)
-    Wrap
+    Terminal
     ;
 
   recdef = def: let
@@ -40,8 +40,8 @@
     Self;
 
   classDecl = {
-    derive = Wrap [];
-    ops = Wrap {};
+    derive = Terminal [];
+    ops = Terminal {};
   };
 
   unwrapBuilder = builder: Self:

@@ -33,8 +33,8 @@ in {
           protected = [];
         };
         # XXX: TODO: are these needed?
-        # options = Wrap {};
-        # config = Wrap {};
+        # options = Terminal {};
+        # config = Terminal {};
       };
 
     descendentInputs = mkInputs mixture.protected;

@@ -1,6 +1,3 @@
-- [ ] implement naive Tip/Terminal type
-- [ ] remove all dependency on Wrap type (it's already gone anyways...)
-- [ ] /primitives/bootstrap/parse/parse.nix should be able to terminate on Tip/Terminal elements
 - [ ] mix should do a deeply nested merge, not a surface level merge
 - [ ] implement isomorphisms (especially from primitives to NixTypes)
 
