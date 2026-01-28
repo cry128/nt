@@ -11,7 +11,8 @@ let
     mapAttrs
     ;
 
-  # NOTE: bootstrap does the equivalent to mix's `include.public` option.
+  # NOTE: bootstrap can do the equivalent of mix's
+  # NOTE: `include.public` & `submods.public` options.
   bootstrap = extraInputs: target: let
     this = delegate target;
     inputs = {inherit this;} // extraInputs;
@@ -30,15 +31,18 @@ let
       else target inputs;
   in
     this;
+
+  submods = {
+    bootstrap = _: bootstrap;
+    # XXX: TODO: should I rename bootstrap.nix -> default.nix?
+    prim = ./prim/bootstrap.nix;
+    naive = ./naive/bootstrap.nix;
+  };
 in
   bootstrap {} [
-    ./nt.nix
-    {
-      bootstrap = _: bootstrap;
-      std = ./std/bootstrap.nix;
-      parse = ./parse/bootstrap.nix;
+    submods.prim
+    submods.naive
+    ./attrs.nix
 
-      maybe = ./maybe.nix;
-      terminal = ./terminal.nix;
-    }
+    submods
   ]

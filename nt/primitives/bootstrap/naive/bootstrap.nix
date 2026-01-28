@@ -2,6 +2,8 @@
 # WARNING: this file is strictly for bootstrapping nt
 {this, ...} @ inputs:
 this.bootstrap inputs [
-  ./parse.nix
-  ./sig.nix
+  {
+    maybe = ./maybe.nix;
+    terminal = ./terminal.nix;
+  }
 ]
