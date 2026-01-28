@@ -39,7 +39,7 @@ let
     naive = ./naive/bootstrap.nix;
   };
 in
-  bootstrap {} [
+  bootstrap {inherit bootstrap;} [
     submods.prim
     submods.naive
     ./attrs.nix
