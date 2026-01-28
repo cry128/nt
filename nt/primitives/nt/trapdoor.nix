@@ -8,7 +8,6 @@
   inherit
     (this.std)
     enfHasAttr
-    enfHasAttrUnsafe
     ;
 
   inherit
@@ -23,7 +22,7 @@ in rec {
 
   mkTrapdoorFn = decl:
     assert enfHasAttr "default" decl "mkTrapdoorFn";
-    assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorFn";
+    assert enfHasAttr "unlock" decl "mkTrapdoorFn";
     # return trapdoor function
       (x:
         if x == masterkey
@@ -32,7 +31,7 @@ in rec {
 
   mkTrapdoorSet = decl:
     assert enfHasAttr "default" decl "mkTrapdoorSet";
-    assert enfHasAttrUnsafe "unlock" decl "mkTrapdoorSet";
+    assert enfHasAttr "unlock" decl "mkTrapdoorSet";
     # return trapdoor set
       decl.default
       // {

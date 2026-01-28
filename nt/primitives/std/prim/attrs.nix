@@ -27,13 +27,9 @@ in rec {
   in
     got == "set" || throw "${msg}: expected primitive nix type \"set\" but got \"${got}\"";
 
-  # NOTE: doesn't check if xs is type set, use enfHasAttr instead
-  enfHasAttrUnsafe = name: xs: msg:
-    hasAttr name xs || throw "${msg}: missing required attribute \"${name}\"";
-
-  # NOTE: use enfHasAttr' if you can guarantee xs is type set
   enfHasAttr = name: xs: msg:
-    enfIsAttrs xs msg && enfHasAttrUnsafe name xs msg;
+    assert enfIsAttrs xs msg;
+      hasAttr name xs || throw "${msg}: missing required attribute \"${name}\"";
 
   getAttrOr = name: f: xs:
     if xs ? ${name}
