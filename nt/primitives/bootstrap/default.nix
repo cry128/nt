@@ -39,6 +39,7 @@ in
       parse = ./parse/bootstrap.nix;
 
       maybe = ./maybe.nix;
+      terminal = ./terminal.nix;
       trapdoor = ./trapdoor.nix;
     }
   ]
