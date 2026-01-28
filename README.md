@@ -26,6 +26,70 @@ Some of the sweet sweet batteries included:
 6. **Support For Pipe Operators** (cleaner code with `<|` and `|>` )
 
 ## Types For Humans
+Let's design a `Result` type using the NixTypes system!
+We'll start simple and use the following attribute set
+as our naive basis:
+```nix
+Result = success: value:
+  assert builtins.isBool success;
+  { inherit success value; };
+    
+};
+```
+
+We can 
+```nix
+let
+  inherit (nt)
+    print
+    toString
+    Bool
+    Fn
+    Type
+    ;
+in rec {
+  Result = Type (Self: {
+    ops = {
+      # we need to make a constructor
+      mk = Fn [Bool Any] Self (success: value: { inherit success value; });
+      # create some alternative constructors
+      mkSuccess = Self.mk true;
+      mkFail = Self.mk false; 
+
+      isSuccess = self: self.success;
+      isFail = self: ! self.success;
+
+      unwrap = self: self.value;
+    };
+  });
+
+  # Example Usage:
+  tryGetAttr = name: attrs: let
+    success = attrs ? name;
+    value = attrs.${name} or "AttrSet missing attribute name \"${name}\"";
+  in
+    Result success value;
+
+  # prints myAttr and returns the default value (same as builtins.trace!)
+  printMyAttr = attrs: default: let 
+    result = tryGetAttr "myAttr";
+  in
+    if result.isSuccess
+    then print (toString result.unwrap) default
+    else default;
+}
+```
+
+Now let's try something a little harder and try to make our
+`Result` type act more like Rust's `std::result` crate:
+```rust
+enum Result<T, E> {
+   Ok(T),
+   Err(E),
+}
+```
+>[!TODO]
+> I'm sleepy and I'll finish this in the morning...
 
 
 ## Types (Not) For Humans
