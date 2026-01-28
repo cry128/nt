@@ -1,6 +1,7 @@
 {this, ...}: let
   inherit
     (builtins)
+    all
     attrNames
     elem
     elemAt
@@ -31,17 +32,15 @@ in rec {
     assert enfIsAttrs xs msg;
       hasAttr name xs || throw "${msg}: missing required attribute \"${name}\"";
 
-  getAttrOr = name: f: xs:
-    if xs ? ${name}
-    then xs.${name}
-    else f xs;
-
-  getAttrDefault = name: default: getAttrOr name (_: default);
+  getAttrOr = name: f: xs: xs.${name} or f xs;
+  getAttrDefault = name: default: xs: xs.${name} or default;
 
   genAttrs = names: f:
     names
     |> map (n: nameValuePair n (f n))
     |> listToAttrs;
+
+  attrsToList = xs: mapAttrs nameValuePair xs;
 
   mergeAttrsList = list: let
     # `binaryMerge start end` merges the elements at indices `index` of `list` such that `start <= index < end`
@@ -85,4 +84,19 @@ in rec {
     |> removeAttrs xs;
 
   nameValuePair = name: value: {inherit name value;};
+
+  # allAttrs :: (String -> Any -> Bool) -> AttrSet -> Bool
+  allAttrs = pred: xs:
+    attrNames xs |> all (name: pred name xs.${name});
+
+  enfAllAttrs = pred: xs: xsName: reason: msg: let
+    err = name: throw "${msg}: attribute \"${xsName}.${name}\" cannot ${reason}";
+  in
+    attrNames xs
+    |> all (name: pred name xs.${name} || err name);
+
+  # XXX: TODO: for every enf* function make an equivalent assert function
+  # XXX: TODO: (these MUST be chainable for the pipe operator)
+  assertAllAttrs = pred: xsName: reason: msg: xs:
+    assert enfAllAttrs pred xs xsName reason msg; xs;
 }
