@@ -2,19 +2,14 @@
   this,
   mix,
   ...
-}: let
-  inputs = {
-    nt = this;
-    inherit mix;
+}:
+mix.newMixture {nt = this;} (mixture: {
+  includes = {
+    public = [
+      ./mixture.nix
+    ];
+    protected = [
+      ./import.nix
+    ];
   };
-in
-  mix.newMixture inputs (mixture: {
-    includes = {
-      public = [
-        ./mixture.nix
-      ];
-      protected = [
-        ./import.nix
-      ];
-    };
-  })
+})

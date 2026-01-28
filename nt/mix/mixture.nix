@@ -4,14 +4,14 @@
   ...
 }: let
   inherit
-    (nt.parse)
-    projectOnto
+    (this)
+    mkIncludes
+    mkSubMods
     ;
 
   inherit
-    (this.mix)
-    mkIncludes
-    mkSubMods
+    (nt.parse)
+    projectOnto
     ;
 in {
   newMixture = inputs: modBuilder: let

@@ -1,4 +1,4 @@
-{this, ...}: let
+{nt, ...}: let
   inherit
     (builtins)
     isAttrs
@@ -8,12 +8,12 @@
     ;
 
   inherit
-    (this)
+    (nt)
     enfIsPrimitive
     ;
 
   inherit
-    (this.std)
+    (nt.std)
     hasInfix
     mergeAttrsList
     nameValuePair
