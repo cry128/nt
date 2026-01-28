@@ -45,7 +45,7 @@
       inherit systems nixpkgs nix-unit;
     };
 
-    bootstrap = import ./nt/primitives/bootstrap;
+    bootstrap = import ./nt/primitives/std;
     mix = import ./nt/mix/bootstrap.nix {this = bootstrap;};
   in
     newMixture inputs (mixture: {

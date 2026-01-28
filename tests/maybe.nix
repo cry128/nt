@@ -3,10 +3,6 @@
     (this)
     ntTrapdoorKey
     ntDynamicTrapdoorKey
-    ;
-
-  inherit
-    (this.std)
     enfImpls
     ;
 
