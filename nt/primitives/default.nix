@@ -1,11 +1,9 @@
 {mix, ...} @ inputs:
 mix.newMixture inputs (mixture: {
-  includes = {
-    public = [
-      ./nt
-    ];
-    protected = [
-      ./bootstrap
-    ];
-  };
+  includes.public = [
+    ./nt
+  ];
+  submods.protected = [
+    ./std
+  ];
 })
