@@ -3,7 +3,8 @@ mix.newMixture inputs (mixture: {
   includes.public = [
     ./nt
   ];
-  submods.protected = [
+  # XXX: TODO: submods.protected STILL doesn't work??
+  submods.public = [
     ./std
   ];
 })
