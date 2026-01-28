@@ -40,6 +40,5 @@ in
 
       maybe = ./maybe.nix;
       terminal = ./terminal.nix;
-      trapdoor = ./trapdoor.nix;
     }
   ]
