@@ -23,6 +23,7 @@ Some of the sweet sweet batteries included:
 3. **Pretty Printing** (no more `builtins.toString` errors)
 4. **A Module System** (say goodbye to managing all your `imports`)
 5. **Types, Types, & More Types** (Maybe/Some/None, Monads, Tree, Rose, etc)
+6. **Support For Pipe Operators** (cleaner code with `<|` and `|>` )
 
 ## Types For Humans
 
@@ -111,21 +112,31 @@ but coming back in a couple months you'd have to decipher your solution.
 **NOW BEHOLD:**
 ```nix
 # nix made simple <3
-f = attrs:
-  attrs
-  |> nt.projectOnto
-  {
-    a = {
-      b = {
-        c = null;  
-        d = "hola";
+let
+  inherit
+    (nt)
+    projectOnto
+    missing
+    verify
+    ;
+in
+{
+  f = attrs:
+    attrs
+    |> projectOnto
+    {
+      a = {
+        b = {
+          c = null;  
+          d = "hola";
+        };
+      };
+      e = {
+        f = required "error message..."; 
+        g = x: x;
+        h = null |> verify isString;
       };
     };
-    e = {
-      f = nt.missing "error message..."; 
-      g = x: x;
-      h = nt.verify null isString;
-    };
-  };
-  |> ...; # your logic here...
+    |> ...; # your logic here...
+}
 ```
