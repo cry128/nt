@@ -12,7 +12,10 @@ let
     ;
 
   # NOTE: bootstrap does the equivalent to mix's `include.public` option.
-  bootstrap = inputs: let
+  bootstrap = extraInputs: target: let
+    this = delegate target;
+    inputs = {inherit this;} // extraInputs;
+
     delegate = target:
     # PATH
       if isPath target
@@ -26,9 +29,9 @@ let
       # FUNCTION (OR FAIL)
       else target inputs;
   in
-    delegate;
-
-  this = bootstrap {inherit this bootstrap;} [
+    this;
+in
+  bootstrap {} [
     ./nt.nix
     {
       bootstrap = _: bootstrap;
@@ -38,6 +41,4 @@ let
       maybe = ./maybe.nix;
       trapdoor = ./trapdoor.nix;
     }
-  ];
-in
-  this
+  ]

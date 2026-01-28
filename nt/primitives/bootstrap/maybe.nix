@@ -1,15 +1,10 @@
-{this, ...}: let
+{...}: let
   inherit
     (builtins)
     attrNames
     concatStringsSep
     isAttrs
     typeOf
-    ;
-
-  inherit
-    (this.std)
-    id
     ;
 in rec {
   # NOTE: Maybe intentionally doesn't use the NixTypes.
