@@ -1,5 +1,5 @@
 # ❄ NixTypes (nt) ❄
-<p align="center">Because Nix never held your hand. It shot off your fingers off and spat out God's longest stack trace</p>
+<p align="center">Because Nix never held your hand. It shot off your fingers and spat out God's longest stack trace</p>
 
 >[!WARNING]
 > ✨ **Under Construction** ✨
@@ -23,6 +23,66 @@ Some of the sweet sweet batteries included:
 3. **Pretty Printing** (no more `builtins.toString` errors)
 4. **A Module System** (say goodbye to managing all your `imports`)
 5. **Types, Types, & More Types** (Maybe/Some/None, Monads, Tree, Rose, etc)
+
+## Types For Humans
+
+
+## Types (Not) For Humans
+Let's define a Maybe type in two diferent ways:
+1. As a polymorphic type `PolyMaybe := Some | None` for monads `Some` and `None`
+2. And as an lax-idempotent (Kock–Zöberlein) monad `KZMaybe` with states `KZSome` and `KZNone`
+```nix
+let
+  inherit
+    (nt)
+    mk
+    enfNotNull
+    Type
+    Sum
+    Monad'
+    KZMonad' # apostrophe implies typeclass
+    ;
+in rec {
+  # === METHOD 1:
+  Some = Type {
+    ops = {
+      Monad'.result = value: mk { inherit value; };
+      Monad'.unwrap = self: self.value;
+      Monad'.bind = self: f: f self.value;
+    };
+    impls = [ Monad' ];
+  };
+  None = Type {
+    ops.mk = mk {
+      Monad'.result = mk {};
+      Monad'.unwrap = _: null;
+      Monad'.bind = _: _: null;
+    };
+    impls = [ Monad' ];
+  };
+  PolyMaybe = Sum [Some None];
+
+  # === METHOD 2:
+  KZSome = value:
+    assert enfNotNull value "KZSome value";
+      KZMaybe;
+  KZNone = KZMaybe null;
+  KZMaybe = Type {
+    ops = {
+      # Lift a value INTO the monadic context
+      # NOTE: because KZMaybe implements KZMonad' lax-idempotence
+      # NOTE: is automatically added to the result operation
+      Monad'.result = value: mk { inherit value; };
+      # Lift a value OUT OF the monadic context
+      Monad'.unwrap = self: self.value;
+      # Alter a value inside the monadic context
+      Monad'.bind = f: x: f x;
+    };
+
+    impls = [ KZMonad' ];
+  };
+}
+```
 
 
 ### ❄🎁 Parse the Parcel
