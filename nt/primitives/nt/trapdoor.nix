@@ -7,14 +7,17 @@
 
   inherit
     (this.std)
+    enfAllAttrs
     enfHasAttr
     ;
 
   inherit
     (this.std.maybe)
-    Some
-    None
+    nullableToMaybe
     ;
+
+  enfNoNullTraps = decl: msg:
+    enfAllAttrs (_: value: value != null) decl.unlock "decl.unlock" "be null" msg;
 in rec {
   masterkey = "_''traps''_";
   defaultTrapdoorKey = "_'";
@@ -23,6 +26,7 @@ in rec {
   mkTrapdoorFn = decl:
     assert enfHasAttr "default" decl "mkTrapdoorFn";
     assert enfHasAttr "unlock" decl "mkTrapdoorFn";
+    assert enfNoNullTraps decl "mkTrapdoorFn";
     # return trapdoor function
       (x:
         if x == masterkey
@@ -32,6 +36,7 @@ in rec {
   mkTrapdoorSet = decl:
     assert enfHasAttr "default" decl "mkTrapdoorSet";
     assert enfHasAttr "unlock" decl "mkTrapdoorSet";
+    assert enfNoNullTraps decl "mkTrapdoorFn";
     # return trapdoor set
       decl.default
       // {
@@ -40,34 +45,19 @@ in rec {
 
   isTrapdoorFnKey = key: T: isFunction T && (T masterkey) ? ${key};
 
-  isTrapdoorSetKey = key: T:
-    if T ? ${masterkey}
-    then T.${masterkey} ? ${key}
-    else false;
+  isTrapdoorSetKey = key: T: T ? ${masterkey}.${key};
 
   isTrapdoorKey = key: T:
     if isAttrs T
     then isTrapdoorSetKey key T
     else isTrapdoorFnKey key T;
 
-  openTrapdoorFn = key: T: let
-    unlock = T masterkey;
-  in
-    if isFunction T && unlock ? ${key}
-    then Some unlock.${key}
-    else None;
-
-  openTrapdoorSet = key: T: let
-    unlock = T.${masterkey};
-  in
-    if T ? ${masterkey} && unlock ? ${key}
-    then Some unlock.${key}
-    else None;
-
   openTrapdoor = key: T:
-    if isFunction T
-    then openTrapdoorFn key T
-    else if isAttrs T
-    then openTrapdoorSet key T
-    else None;
+    nullableToMaybe (
+      if isFunction T
+      then (T masterkey).${key} or null
+      else if isAttrs T
+      then T.${masterkey}.${key} or null
+      else null
+    );
 }
