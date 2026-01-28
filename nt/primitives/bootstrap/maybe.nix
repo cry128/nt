@@ -7,9 +7,7 @@
     typeOf
     ;
 in rec {
-  # NOTE: Maybe intentionally doesn't use the NixTypes.
-  # NOTE: Maybe is used to aid in parsing and bootstrapping.
-  # NOTE: It is intentionally left simple for speed gains.
+  # Naive Maybe Type
   Maybe = some: value: {
     _some = some;
     _value = value;
@@ -19,6 +17,10 @@ in rec {
 
   # Type Checking
   isMaybe = T: isAttrs T && attrNames T == ["_some" "_value"];
+  # XXX: TODO: make a pretty toString function
+  # XXX: TODO: make a pretty toString function
+  # XXX: TODO: make a pretty toString function
+  # XXX: TODO: make a pretty toString function
   enfIsMaybe = T: msg: let
     throw' = got: throw "${msg}: expected naive type Maybe but got ${got}";
     attrs =
@@ -47,7 +49,8 @@ in rec {
   # Unwrap Operations
   # Lift a value out of the monadic context.
   unwrapMaybe = T:
-    assert enfIsMaybe T "unwrapMaybe"; T._value;
+    assert enfIsMaybe T "unwrapMaybe";
+      T._value;
 
   # Map Operations
   # Lift a value out of the monadic context and expect a new monadic.
