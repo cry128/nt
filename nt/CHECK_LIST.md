@@ -1,3 +1,5 @@
+- [ ] mix should warn explicitly or have an "allowShadow" & "allowShadowPredicate"
+        decl option when content will be shadowed
 - [ ] mix should do a deeply nested merge, not a surface level merge
 - [ ] implement isomorphisms (especially from primitives to NixTypes)
 
