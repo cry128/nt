@@ -3,9 +3,12 @@
     (builtins)
     attrNames
     elem
-    getAttr
-    isString
     typeOf
+    ;
+
+  inherit
+    (this)
+    toTypeSig
     ;
 
   inherit
@@ -25,7 +28,13 @@
     openTrapdoor
     ;
 in rec {
+  ntTrapdoorKey = mkTrapdoorKey "nt";
+  ntDynamicTrapdoorKey = mkTrapdoorKey "ntDyn";
+
   openNT = openTrapdoor ntTrapdoorKey;
+
+  # check if a value is NOT NixTypes compatible
+  isPrimitive = ! isNT;
 
   # check if a value is NixTypes compatible
   isNT = T:
@@ -54,8 +63,19 @@ in rec {
       && content.instance == true)
     |> isSome;
 
-  # XXX: TODO: Implement isomorphisms between types especially
-  # XXX: TODO: implicit isomorphism from nix primitives to NT types.
+  enfIsPrimitive = type: value: msg: let
+    got = typeOf value;
+  in
+    got == type || throw "${msg}: expected primitive nix type \"${type}\" but got \"${got}\"";
+
+  enfIsNT = T: msg:
+    isNT T || throw "${msg}: expected nt compatible type but got \"${toString T}\" of primitive nix type \"${typeOf T}\"";
+
+  enfImpls = type: T: msg:
+    impls type T || throw "${msg}: given type \"${toTypeSig T}\" does not implement typeclass \"${toTypeSig type}\"";
+
+  # XXX: TODO: Implement isomorphisms between types, especially
+  # XXX: TODO: implicit isomorphisms from nix primitives to NT types.
 
   impls = type: T:
     assert enfIsNT T "nt.impls";
@@ -68,29 +88,4 @@ in rec {
       openNT T
       |> bindMaybe (content: content.sig == toTypeSig type)
       |> isSome;
-
-  typeSig = T:
-    assert enfIsNT T "nt.typeSig";
-      openNT T
-      |> bindMaybe (getAttr "sig")
-      |> isSome;
-
-  toTypeSig = x:
-    if isString x
-    then x
-    else typeSig x;
-
-  ntTrapdoorKey = mkTrapdoorKey "nt";
-  ntDynamicTrapdoorKey = mkTrapdoorKey "ntDyn";
-
-  enfIsPrimitive = type: value: msg: let
-    got = typeOf value;
-  in
-    got == type || throw "${msg}: expected primitive nix type \"${type}\" but got \"${got}\"";
-
-  enfIsNT = T: msg:
-    isNT T || throw "${msg}: expected nt compatible type but got \"${toString T}\" of primitive nix type \"${typeOf T}\"";
-
-  enfImpls = type: T: msg:
-    impls type T || throw "${msg}: given type \"${toTypeSig T}\" does not implement typeclass \"${toTypeSig type}\"";
 }

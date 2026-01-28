@@ -16,6 +16,7 @@
   inherit
     (this.std)
     flip
+    recdef
     removeAttrsRec
     ;
 
@@ -33,11 +34,6 @@
     (this.types)
     Terminal
     ;
-
-  recdef = def: let
-    Self = def Self;
-  in
-    Self;
 
   classDecl = {
     derive = Terminal [];

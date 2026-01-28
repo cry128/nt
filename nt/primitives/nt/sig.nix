@@ -1,9 +1,23 @@
 {this, ...}: let
   inherit
     (builtins)
+    getAttr
+    isString
     split
     stringLength
     typeOf
+    ;
+
+  inherit
+    (this)
+    enfIsNT
+    openNT
+    ;
+
+  inherit
+    (this.maybe)
+    bindMaybe
+    isSome
     ;
 
   inherit
@@ -51,6 +65,17 @@ in rec {
     if result != null && (last result |> isClassName)
     then init result ++ (last result |> stringTail)
     else null;
+
+  typeSig = T:
+    assert enfIsNT T "nt.typeSig";
+      openNT T
+      |> bindMaybe (getAttr "sig")
+      |> isSome;
+
+  toTypeSig = x:
+    if isString x
+    then x
+    else typeSig x;
 
   # NOTE: we're testing how similar `list` is to `toTypeSig type` (non-commutative)
   # NOTE: we measure similarity in the reverse order (ie end of signature is most important)

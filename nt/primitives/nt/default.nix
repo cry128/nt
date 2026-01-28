@@ -2,7 +2,7 @@
 mix.newMixture inputs (mixture: {
   includes = {
     public = [
-      ./nt
+      ./nt.nix
     ];
     protected = [
       ./bootstrap
