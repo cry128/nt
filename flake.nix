@@ -28,7 +28,7 @@
       ;
 
     # inputs accessible to all modules
-    base = {
+    inputs = {
       inherit mix;
       flake = self;
       # XXX: TODO: implement mix.extend instead of this
@@ -45,19 +45,15 @@
       inherit systems nixpkgs nix-unit;
     };
 
-    # Step 1: Bootstrap and blast off (*zooommmmm whoooosshhhhh pppppeeeeeeewww*)
     bootstrap = import ./nt/primitives/bootstrap;
-    # Step 2: Lie to Mix about its real identity (it's not ready for the truth...)
-    mix = import ./nt/mix {this = bootstrap;};
+    mix = import ./nt/mix/bootstrap.nix {this = bootstrap;};
   in
-    newMixture base (mixture: {
+    newMixture inputs (mixture: {
       includes.public = [
         # XXX: TODO: implement mix.extend
         # (extend ./flake deps)
         ./flake
-        # Step 3: Actually import NixTypes
         ./nt
       ];
     });
-  # Step 4: Like and subscripe!!1!11!!!!!
 }
