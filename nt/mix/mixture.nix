@@ -15,8 +15,6 @@
     ;
 in {
   newMixture = inputs: modBuilder: let
-    mkInputs = this: {inherit this;} // inputs;
-
     # parse mixture declaration structure
     decl =
       modBuilder mixture.private
@@ -37,9 +35,12 @@ in {
         # config = Terminal {};
       };
 
+    mkInputs = mixture: {this = mixture;} // inputs;
     descendentInputs = mkInputs mixture.protected;
+
     mkMixtureIncludes = layer: mkIncludes decl.includes.${layer} descendentInputs;
     mkMixtureSubMods = layer: mkSubMods decl.submods.${layer} descendentInputs;
+
     includes = {
       public = mkMixtureIncludes "public";
       protected = includes.public // mkMixtureIncludes "protected";
