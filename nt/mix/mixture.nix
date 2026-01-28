@@ -20,6 +20,8 @@ in {
       modBuilder mixture.private
       |> projectOnto
       {
+        isolated = false;
+
         includes = {
           public = [];
           private = [];
@@ -35,8 +37,11 @@ in {
         # config = Terminal {};
       };
 
-    mkInputs = mixture: {this = mixture;} // inputs;
-    descendentInputs = mkInputs mixture.protected;
+    inputBuilder = mixture:
+      if decl.isolated
+      then inputs // {this = mixture;}
+      else {this = mixture;} // inputs;
+    descendentInputs = inputBuilder mixture.protected;
 
     mkMixtureIncludes = layer: mkIncludes decl.includes.${layer} descendentInputs;
     mkMixtureSubMods = layer: mkSubMods decl.submods.${layer} descendentInputs;

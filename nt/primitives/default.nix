@@ -1,10 +1,10 @@
 {mix, ...} @ inputs:
 mix.newMixture inputs (mixture: {
+  isolated = true;
   includes.public = [
     ./nt
   ];
-  # XXX: TODO: submods.protected STILL doesn't work??
-  submods.public = [
+  submods.protected = [
     ./std
   ];
 })
