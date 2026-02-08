@@ -13,6 +13,10 @@
     };
   };
 
+  nixConfig = {
+    extra-experimental-features = "pipe-operators";
+  };
+
   outputs = {
     self,
     systems,
