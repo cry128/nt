@@ -3,9 +3,15 @@
 
 >[!WARNING]
 > ✨ **Under Construction** ✨
+>
 > NixTypes is **quite** a large project to do alone, but it's been staring at me for the last 12 months.
 > If you're interested feel free to contact me and/or submit pull requests :yellow_heart::yellow_heart:
+>
 > **Be not afraid!** It's only a matter of time until NixTypes is ready for use!
+
+>[!CAUTION]
+> The current syntax is quite ugly and **no it's not final.** NixTypes is in an
+> **extremely experimental** prototyping stage!
 
 ## 💙 Huh?
 Nix has no type system duh!? Sure that's fine for configuring your distro,

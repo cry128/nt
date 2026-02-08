@@ -1,7 +1,13 @@
+- [ ] Write out beginner examples of how someone can import nt in a flake and also a nix expression
+- [ ] Fix the README.md "Parse The Parcel" example to use a different nt function (projectOnto allows additional attributes which we don't want)
 - [ ] mix should warn explicitly or have an "allowShadow" & "allowShadowPredicate"
         decl option when content will be shadowed
+- [ ] allowing shadowing be enabled by mix, but all the backend shit should be in parsing related functions
+- [ ] extend the parsing system
+- [ ] implement the pattern matching system
 - [ ] mix should do a deeply nested merge, not a surface level merge
 - [ ] implement isomorphisms (especially from primitives to NixTypes)
+- [ ] NOTE TO SELF: what would a "Category Oriented Programming" paradigm look like? (is that my goal with NixTypes?)
 
 
 A Generic Type/Class could be implement to use like:
