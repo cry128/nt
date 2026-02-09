@@ -34,5 +34,5 @@ in rec {
   # Lift a value out of the Terminal context.
   unwrapTerminal = T:
     assert enfIsTerminal T "unwrapTerminal";
-      T._value_;
+      T._value;
 }
