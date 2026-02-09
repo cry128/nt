@@ -4,6 +4,12 @@
   ...
 }: let
   inherit
+    (builtins)
+    attrNames
+    removeAttrs
+    ;
+
+  inherit
     (this)
     mkIncludes
     mkSubMods
@@ -15,27 +21,29 @@
     ;
 in {
   newMixture = inputs: modBuilder: let
-    # parse mixture declaration structure
-    decl =
-      modBuilder mixture.private
-      |> projectOnto
-      {
-        isolated = false;
+    templateDecl = {
+      isolated = false;
 
-        includes = {
-          public = [];
-          private = [];
-          protected = [];
-        };
-        submods = {
-          public = [];
-          private = [];
-          protected = [];
-        };
-        # XXX: TODO: are these needed?
-        # options = Terminal {};
-        # config = Terminal {};
+      includes = {
+        public = [];
+        private = [];
+        protected = [];
       };
+      submods = {
+        public = [];
+        private = [];
+        protected = [];
+      };
+      # XXX: TODO: are these needed?
+      # options = Terminal {};
+      # config = Terminal {};
+    };
+
+    # parse mixture declaration structure
+    decl' = modBuilder mixture.private;
+    decl = decl' |> projectOnto templateDecl;
+
+    otherAttrs = removeAttrs decl' (attrNames templateDecl);
 
     inputBuilder = mixture:
       if decl.isolated
@@ -61,7 +69,8 @@ in {
     mixture = {
       public =
         includes.public
-        // submods.public;
+        // submods.public
+        // otherAttrs;
       protected =
         includes.protected
         // submods.protected;

@@ -72,7 +72,7 @@ in rec {
       then unwrapTerminal target
       # ATTRS
       else if isAttrs target
-      then target |> mapAttrs (_: value: delegate value)
+      then target
       # FUNCTION (OR FAIL)
       else
         assert isFunction target
