@@ -23,11 +23,8 @@
     nixpkgs,
     nix-unit,
   }: let
-    # TODO: implement mix.extend and mix.isolate
     inherit
       (mix)
-      extend
-      # isolate
       newMixture
       ;
 
@@ -35,6 +32,9 @@
     inputs = {
       inherit mix;
       flake = self;
+      # flake dependencies
+      # NOTE: the NixTypes library has no dependencies
+      # NOTE: but the developer tooling (for me) does
       # XXX: TODO: implement mix.extend instead of this
       deps = {
         inherit nixpkgs nix-unit;
@@ -42,20 +42,11 @@
       };
     };
 
-    # flake dependencies
-    # NOTE: the NixTypes library has no dependencies
-    # NOTE: but the developer tooling (for me) does
-    deps = {
-      inherit systems nixpkgs nix-unit;
-    };
-
-    bootstrap = import ./nt/primitives/std;
+    bootstrap = import ./nt/precursor/bootstrap;
     mix = import ./nt/mix/bootstrap.nix {this = bootstrap;};
   in
     newMixture inputs (mixture: {
       includes.public = [
-        # XXX: TODO: implement mix.extend
-        # (extend ./flake deps)
         ./flake
         ./nt
       ];

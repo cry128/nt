@@ -4,10 +4,12 @@ mix.newMixture inputs (mixture: {
   includes = {
     public = [
       ./nt
+      # XXX: DEBUG: make this protected
+      ./bootstrap
     ];
     protected = [
       # XXX: WARNING: reimplement std but typesafe
-      ./bootstrap
+      # ./bootstrap
     ];
   };
 })
