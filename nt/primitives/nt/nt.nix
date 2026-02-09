@@ -18,13 +18,13 @@
     ;
 
   inherit
-    (this.std)
+    (this.prim)
     contains
     not
     ;
 
   inherit
-    (this.std.maybe)
+    (this.naive.maybe)
     isSome
     bindMaybe
     ;

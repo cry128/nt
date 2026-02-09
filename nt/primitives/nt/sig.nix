@@ -15,7 +15,7 @@
     ;
 
   inherit
-    (this.std)
+    (this.prim)
     filterEven
     init
     last
@@ -25,7 +25,7 @@
     ;
 
   inherit
-    (this.std.maybe)
+    (this.naive.maybe)
     bindMaybe
     isSome
     ;

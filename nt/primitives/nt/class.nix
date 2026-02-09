@@ -22,7 +22,7 @@
     ;
 
   inherit
-    (this.std)
+    (this.prim)
     flip
     hasAttrAt
     projectOnto
@@ -31,7 +31,7 @@
     ;
 
   inherit
-    (this.std.terminal)
+    (this.naive.terminal)
     Terminal
     ;
 

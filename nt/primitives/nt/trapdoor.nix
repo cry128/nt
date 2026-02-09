@@ -6,13 +6,13 @@
     ;
 
   inherit
-    (this.std)
+    (this.prim)
     enfAllAttrs
     enfHasAttr
     ;
 
   inherit
-    (this.std.maybe)
+    (this.naive.maybe)
     nullableToMaybe
     ;
 
