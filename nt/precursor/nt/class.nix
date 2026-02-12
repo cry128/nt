@@ -1,18 +1,24 @@
 {this, ...}: let
   inherit
     (builtins)
+    all
+    attrValues
+    concatLists
+    filter
     isFunction
     length
-    mapAttrs
+    mergeAttrsList
     partition
+    typeOf
     ;
 
   inherit
     (this)
     enfIsType
     enfIsClassSig
+    isClass
+    enfIsTypeSig
     ntTrapdoorKey
-    parseClassSig
     typeSig
     ;
 
@@ -28,6 +34,7 @@
     projectOnto
     recdef
     removeAttrsRec
+    unique
     ;
 
   inherit
@@ -35,10 +42,18 @@
     Terminal
     ;
 
+  inherit
+    (this.naive.require)
+    isRequire
+    ;
+
   classDecl = {
     derive = Terminal [];
     ops = Terminal {};
   };
+
+  # XXX: i think this works?
+  typeDecl = classDecl;
 
   unwrapBuilder = builder: Self:
     if isFunction builder
@@ -56,33 +71,87 @@
   # ELSE IF IT IS SPECIFIED BY NAMESPACE
   # THEN add it to a list of all invalid ops (errors)
   # ELSE add it to a list of ops belonging solely to self
-  parseOps = ops: req: let
+  parseOps = decl: let
+    opsFormatted = assert (
+      decl.ops
+      |> attrValues
+      |> all isFunction
+    )
+    || throw ''
+      Typeclass opts must be specified as an attrset of functions.
+      Either clarify the deriving class by partial name (ie `MyClass.myOp = ...`)
+      or by complete type signature (ie `$${typeSig MyClass}.myOp = ...`).
+    '';
+      decl.ops
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      # XXX: WARNING: TODO: this code is unfinished!!!!
+      |> partition (x: true); # i forgor, TODO: rember :(
+
+    # NOTE: reqDerived can/will contain duplicates
+    # NOTE: it's wasteful to filter uniques now, just wait
+    reqDerived =
+      decl.derive
+      |> map (x: x.req)
+      |> mergeAttrsList;
+
+    reqSelf =
+      decl.ops
+      |> filter isRequire;
+
     reqPaths =
-      req
-      |> mapAttrs (name: let
-        segs = parseClassSig name;
-      in
-        value: segs ++ [value]);
+      (reqDerived ++ reqSelf)
+      |> unique # XXX: now we filter uniques
+      |> 3;
+
+    # reqPaths =
+    #   decl.req
+    #   |> mapAttrs (name: let
+    #     segs = parseClassSig name;
+    #   in
+    #     value: segs ++ [value]);
 
     # XXX: TODO: having to specify the full namespace sucks :(
 
-    matches = partition (flip hasAttrAt ops) reqPaths;
+    matches = partition (flip hasAttrAt decl.ops) reqPaths;
 
     pathsMissing = matches.wrong;
-    opsSelf = removeAttrsRec matches.right ops;
-    opsDerived = removeAttrsRec matches.wrong ops;
+    opsSelf = removeAttrsRec matches.right decl.ops;
+    opsDerived = removeAttrsRec matches.wrong decl.ops;
   in {
     inherit opsSelf opsDerived pathsMissing;
     success = length pathsMissing == 0;
   };
 
   mkClass = sig: decl:
-    assert enfIsClassSig sig "mkClass"; let
+    assert enfIsClassSig sig "mkClass";
+    assert decl.derive
+    |> all (x:
+      isClass x
+      || throw ''
+        NixTypes can only derive from NixType classes!
+        However, ${sig} derives from invalid ${x} (type: ${typeOf x}).
+      ''); let
+      # XXX: TODO: enforce that every derive is a class!
       allDerivedClasses =
         decl.derive
-        |> map (class: typeSig class ++ class.${ntTrapdoorKey}.derive);
+        |> map (class: [typeSig class] ++ class.${ntTrapdoorKey}.derive)
+        |> concatLists;
 
-      parseResult = parseOps decl.ops decl.req;
+      parseResult = parseOps decl;
       inherit
         (parseResult)
         opsSelf
@@ -98,15 +167,38 @@
             ${ntTrapdoorKey} = {
               inherit sig;
               derive = allDerivedClasses;
-              ops = {${sig} = opsSelf;} // opsDerived;
-              req = null; # XXX: TODO make it more advanced
+              ops = opsDerived // {${sig} = opsSelf;};
+              req = null;
             };
           };
         };
+
+  mkType = sig: decl:
+    assert enfIsTypeSig sig "mkType"; let
+      allDerivedClasses =
+        decl.derive
+        |> map (class: typeSig class ++ class.${ntTrapdoorKey}.derive);
+
+      parseResult = parseOps decl;
+      inherit
+        (parseResult)
+        opsSelf
+        opsDerived
+        ;
+    in
+      # XXX: WARNING: classes currently *shouldn't* be able to inherit ops (i think?)
+      assert parseResult.success || throw "TODO";
+        opsSelf.mk;
 in {
   Class = sig: builder:
     recdef (Self:
       unwrapBuilder builder Self
       |> parseDecl classDecl
       |> mkClass sig);
+
+  Type = sig: builder:
+    recdef (Self:
+      unwrapBuilder builder Self
+      |> parseDecl typeDecl
+      |> mkType sig);
 }

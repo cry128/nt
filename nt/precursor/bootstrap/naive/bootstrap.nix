@@ -4,6 +4,7 @@
 bootstrap inputs [
   {
     maybe = ./maybe.nix;
+    require = ./require.nix;
     terminal = ./terminal.nix;
   }
 ]

@@ -28,6 +28,7 @@
     (this.naive.maybe)
     bindMaybe
     isSome
+    Some
     ;
 in rec {
   parseSig = sig: let
@@ -69,12 +70,11 @@ in rec {
   typeSig = T:
     assert enfIsNT T "nt.typeSig";
       openNT T
-      |> bindMaybe (getAttr "sig")
-      |> isSome;
+      |> bindMaybe (getAttr "sig");
 
   toTypeSig = x:
     if isString x
-    then x
+    then Some x
     else typeSig x;
 
   # NOTE: we're testing how similar `list` is to `toTypeSig type` (non-commutative)

@@ -1,7 +1,6 @@
 {...}: let
   inherit
     (builtins)
-    all
     elem
     elemAt
     foldl'
@@ -9,7 +8,10 @@
     length
     ;
 in rec {
-  contains = sub: list: all (x: elem x list) sub;
+  # contains = x: list:
+  #   list
+  #   |> foldl' (state: el: state || el == x) false;
+  contains = elem;
 
   sublist = start: count: list: let
     len = length list;
@@ -82,4 +84,13 @@ in rec {
     if index == null
     then default
     else elemAt list index;
+
+  unique = list:
+    list
+    |> foldl' (
+      acc: el:
+        if acc |> contains el
+        then acc
+        else acc ++ [el]
+    ) [];
 }
