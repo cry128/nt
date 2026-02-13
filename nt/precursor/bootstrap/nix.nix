@@ -4,10 +4,13 @@
     pathExists
     ;
 in {
-  findImport = path:
-    if pathExists path
-    then path
-    else if pathExists (path + "default.nix")
-    then path + "/default.nix"
-    else path + ".nix";
+  findImport = path: let
+    pathA = path + "/default.nix";
+    pathB = path + ".nix";
+  in
+    if pathExists pathA
+    then pathA
+    else if pathExists pathB
+    then pathB
+    else path;
 }
