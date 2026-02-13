@@ -43,6 +43,7 @@ in
     submods.prim
     submods.naive
     ./attrs.nix
+    ./nix.nix
 
     submods
   ]
