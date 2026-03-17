@@ -85,7 +85,8 @@ in rec {
     then default
     else elemAt list index;
 
-  unique = list:
+  unique = uniq;
+  uniq = list:
     list
     |> foldl' (
       acc: el:
